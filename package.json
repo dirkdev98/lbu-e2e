@@ -1,12 +1,12 @@
 {
-  "name": "@lbu/e2e",
+  "name": "lbu-e2e",
   "private": true,
-  "version": "0.0.8",
+  "version": "0.1.0",
   "description": "E2E testing",
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "start": "NOD_ENV=production yarn lbu ./src/api.js"
+    "start": "NOD_ENV=production node ./src/api.js"
   },
   "dependencies": {
     "@lbu/insight": "0.0.9",

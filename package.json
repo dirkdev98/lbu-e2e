@@ -5,6 +5,9 @@
   "description": "E2E testing",
   "type": "module",
   "license": "MIT",
+  "scripts": {
+    "start": "NOD_ENV=production yarn lbu ./src/api.js"
+  },
   "dependencies": {
     "@lbu/insight": "0.0.9",
     "@lbu/server": "0.0.9",
@@ -28,6 +31,6 @@
     "url": "https://github.com/lightbasenl/lbu.git"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=13"
   }
 }

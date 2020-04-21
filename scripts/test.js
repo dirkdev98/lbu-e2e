@@ -3,73 +3,74 @@ import { mainFn } from "@lbu/stdlib";
 import axios from "axios";
 import tape from "tape";
 import promiseWrap from "tape-promise";
-import * as api from "../src/generated/apiClient.js";
 import {
-  validateTodoAllResponse,
-  validateTodoListResponse,
-} from "../src/generated/validators.js";
+  createApiClient,
+  todoApi,
+  unimplementedApi,
+} from "../src/generated/apiClient.js";
+import { todoValidators } from "../src/generated/validators.js";
 
 mainFn(import.meta, log, main);
 
-async function main(logger) {
+async function main() {
   const test = promiseWrap.default(tape);
 
-  api.createApiClient(
+  createApiClient(
     axios.create({
       baseURL: "http://localhost:3000",
     })
   );
 
   test("todo#all", async (t) => {
-    const response = await api.todo.all();
+    const response = await todoApi.all();
 
-    t.deepEqual(response, validateTodoAllResponse(response));
+    t.deepEqual(response, todoValidators.allResponse(response));
 
     t.end();
   });
 
   test("todo#one", async (t) => {
-    const response = await api.todo.one({ name: "Default List" });
+    const response = await todoApi.one({ name: "Default List" });
 
-    t.deepEqual(response, validateTodoListResponse(response));
+    t.deepEqual(response, todoValidators.listResponse(response));
 
     t.end();
   });
 
   test("todo#new", async (t) => {
-    const postResponse = await api.todo.new({ name: "Todo Test" });
+    const postResponse = await todoApi.new({ name: "Todo Test" });
 
-    t.deepEqual(postResponse, validateTodoListResponse(postResponse));
+    t.deepEqual(postResponse, todoValidators.listResponse(postResponse));
 
-    const getResponse = await api.todo.one({ name: "Todo Test" });
+    const getResponse = await todoApi.one({ name: "Todo Test" });
     t.deepEqual(getResponse, postResponse);
 
     t.end();
   });
 
   test("todo#createItem", async (t) => {
-    const response = await api.todo.createItem(
+    const response = await todoApi.createItem(
       { name: "Todo Test" },
       { name: "TodoItem 1" }
     );
 
-    t.deepEqual(response, validateTodoListResponse(response));
+    t.deepEqual(response, todoValidators.listResponse(response));
 
     t.end();
   });
 
   test("todo#toggleItem", async (t) => {
-    let response = await api.todo.toggleItem(
+    let response = await todoApi.toggleItem(
       {
         name: "Todo Test",
       },
       { index: "0" }
     );
 
-    t.deepEqual(response, validateTodoListResponse(response));
+    t.deepEqual(response, todoValidators.listResponse(response));
     t.equal(response.todo.items[0].completed, true, "item completed");
 
-    response = await api.todo.toggleItem(
+    response = await todoApi.toggleItem(
       {
         name: "Todo Test",
       },
@@ -83,11 +84,11 @@ async function main(logger) {
   });
 
   test("todo#delete", async (t) => {
-    const response = await api.todo.delete({ name: "Todo Test" });
+    const response = await todoApi.delete({ name: "Todo Test" });
     t.equal(response.deleted, true);
 
     try {
-      await api.todo.one({ name: "Todo Test" });
+      await todoApi.one({ name: "Todo Test" });
       t.fail("Should nog resolve");
     } catch (e) {
       t.equal(e.response.status, 400);
@@ -98,8 +99,8 @@ async function main(logger) {
 
   test("unimplemented", async (t) => {
     log.info({
-      user: await api.unimplemented.user(),
-      settings: await api.unimplemented.settings(),
+      user: await unimplementedApi.getUser(),
+      settings: await unimplementedApi.settings(),
     });
 
     t.end();

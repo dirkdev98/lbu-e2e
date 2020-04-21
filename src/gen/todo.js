@@ -1,52 +1,55 @@
-import { M, R } from "@lbu/code-gen";
-
 /**
  * @param {App} app
  */
+import { TypeCreator } from "@lbu/code-gen";
+
 export function todoModel(app) {
-  const todoList = M.object("TodoList", {
+  const M = new TypeCreator("todo");
+
+  const todoList = M.object("List", {
     name: M.string(),
     items: M.array(
-      M.object("TodoItem", {
+      M.object("Item", {
         completed: M.bool().default(false),
         name: M.string(),
       })
     ),
   });
 
-  const todoCollection = M.generic("TodoCollection")
-    .keys(M.ref("TodoList", "name"))
+  const todoCollection = M.generic("Collection")
+    .keys(M.string())
     .values(todoList);
 
-  app.validator(todoList, todoCollection);
+  app.validator(todoList);
+  app.validator(todoCollection);
 
-  const routes = R.group("todo", "/todo");
+  const router = M.router("/todo");
 
-  const paramValidator = M.object("TodoNameParam", {
+  const paramValidator = M.object("NameParam", {
     name: M.string().min(0).max(30).trim().convert(),
   });
 
   app.route(
-    routes.get("/", "all").response(
+    router.get("/", "all").response(
       M.object({
         store: todoCollection,
       })
     )
   );
 
-  const todoListResponse = M.object("TodoListResponse", {
+  const todoListResponse = M.object("ListResponse", {
     todo: todoList,
   });
 
   app.route(
-    routes
+    router
       .get("/:name", "one")
       .params(paramValidator)
       .response(todoListResponse)
   );
 
   app.route(
-    routes
+    router
       .post("/", "new")
       .body(
         M.object({
@@ -61,7 +64,7 @@ export function todoModel(app) {
   );
 
   app.route(
-    routes
+    router
       .post("/:name/item/", "createItem")
       .params(paramValidator)
       .body(
@@ -77,7 +80,7 @@ export function todoModel(app) {
   );
 
   app.route(
-    routes
+    router
       .post("/:name/item/toggle", "toggleItem")
       .params(paramValidator)
       .body(
@@ -89,7 +92,7 @@ export function todoModel(app) {
   );
 
   app.route(
-    routes
+    router
       .delete("/:name", "delete")
       .params(paramValidator)
       .response(

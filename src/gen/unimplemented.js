@@ -1,13 +1,14 @@
-import { M, R } from "@lbu/code-gen";
-
 /**
  * @param {App} app
  */
+import { TypeCreator } from "@lbu/code-gen";
+
 export function unimplementedModel(app) {
-  const routes = R.group("unimplemented", "/unimplemented");
+  const M = new TypeCreator("unimplemented");
+  const router = M.router("/unimplemented");
 
   const userModel = M.object("User", {
-    id: M.string().mock("__.guid({ version: 4 })"),
+    id: M.uuid(),
     name: M.string().mock("__.first() + ' ' + __.last()"),
     age: M.number().integer().mock("__.age()"),
   });
@@ -32,6 +33,6 @@ export function unimplementedModel(app) {
     ),
   });
 
-  app.route(routes.get("/user", "user").response(userModel));
-  app.route(routes.get("/settings", "settings").response(settingsModel));
+  app.route(router.get("/user", "getUser").response(userModel));
+  app.route(router.get("/settings", "settings").response(settingsModel));
 }

@@ -6,19 +6,19 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "start": "NOD_ENV=production node ./src/api.js"
+    "start": "NOD_ENVE=production node ./src/api.js"
   },
   "dependencies": {
-    "@lbu/insight": "0.0.9",
-    "@lbu/server": "0.0.9",
-    "@lbu/stdlib": "0.0.9",
+    "@lbu/insight": "0.0.10",
+    "@lbu/server": "0.0.10",
+    "@lbu/stdlib": "0.0.10",
     "axios": "0.19.2",
     "chance": "1.1.4"
   },
   "devDependencies": {
-    "@lbu/cli": "0.0.9",
-    "@lbu/code-gen": "0.0.9",
-    "@lbu/lint-config": "0.0.9",
+    "@lbu/cli": "0.0.10",
+    "@lbu/code-gen": "0.0.10",
+    "@lbu/lint-config": "0.0.10",
     "tape": "4.13.2",
     "tape-promise": "4.0.0"
   },
@@ -31,6 +31,6 @@
     "url": "https://github.com/lightbasenl/lbu.git"
   },
   "engines": {
-    "node": ">=13"
+    "node": ">=14"
   }
 }

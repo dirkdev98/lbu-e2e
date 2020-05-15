@@ -1,6 +1,16 @@
-# E2E
+# lbu-e2e backend
 
-### Developing
+Backend powered by lbu version 0.0.17.
 
-Make sure you have the lbu repository up and running. Change to this directory
-and use `yarn lbu help` for scripts that are available.
+For more information on LBU see the
+[docs](https://github.com/lightbasenl/lbu/tree/master/docs)
+
+## Getting started
+
+```shell script
+yarn
+yarn lbu docker up
+yarn lbu migrate
+yarn lbu test
+yarn lbu help
+```

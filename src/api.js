@@ -1,7 +1,12 @@
 import { log } from "@lbu/insight";
-import { AppError, createBodyParsers, getApp } from "@lbu/server";
-import { isNil, mainFn } from "@lbu/stdlib";
-import { groupMiddleware, router, todoHandlers } from "./generated/router.js";
+import { createBodyParsers, getApp } from "@lbu/server";
+import { AppError, isNil, mainFn } from "@lbu/stdlib";
+import {
+  groupMiddleware,
+  router,
+  setBodyParser,
+  todoHandlers,
+} from "./generated/router.js";
 import { validatorSetErrorFn } from "./generated/validators.js";
 import { TodoStore } from "./services/TodoStore.js";
 
@@ -32,8 +37,8 @@ export function constructApp() {
   });
 
   validatorSetErrorFn(AppError.validationError);
-  createBodyParsers({});
-
+  const { bodyParser } = createBodyParsers({});
+  setBodyParser(bodyParser);
   app.use(router);
 
   mountHandlers();

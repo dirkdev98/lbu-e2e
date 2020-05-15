@@ -29,10 +29,10 @@ export function unimplementedModel(app) {
         M.object({
           foo: M.bool().optional(),
         }),
-      ])
+      ]),
     ),
   });
 
-  app.route(router.get("/user", "getUser").response(userModel));
-  app.route(router.get("/settings", "settings").response(settingsModel));
+  app.add(router.get("/user", "getUser").response(userModel));
+  app.add(router.get("/settings", "settings").response(settingsModel));
 }

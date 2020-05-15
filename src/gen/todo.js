@@ -12,7 +12,7 @@ export function todoModel(app) {
       M.object("Item", {
         completed: M.bool().default(false),
         name: M.string(),
-      })
+      }),
     ),
   });
 
@@ -20,8 +20,8 @@ export function todoModel(app) {
     .keys(M.string())
     .values(todoList);
 
-  app.validator(todoList);
-  app.validator(todoCollection);
+  app.add(todoList);
+  app.add(todoCollection);
 
   const router = M.router("/todo");
 
@@ -29,26 +29,26 @@ export function todoModel(app) {
     name: M.string().min(0).max(30).trim().convert(),
   });
 
-  app.route(
+  app.add(
     router.get("/", "all").response(
       M.object({
         store: todoCollection,
-      })
-    )
+      }),
+    ),
   );
 
   const todoListResponse = M.object("ListResponse", {
     todo: todoList,
   });
 
-  app.route(
+  app.add(
     router
       .get("/:name", "one")
       .params(paramValidator)
-      .response(todoListResponse)
+      .response(todoListResponse),
   );
 
-  app.route(
+  app.add(
     router
       .post("/", "new")
       .body(
@@ -58,12 +58,12 @@ export function todoModel(app) {
             .max(40)
             .trim()
             .mock("'Todo ' + __.integer({ min: 0, max: 1000 })"),
-        })
+        }),
       )
-      .response(todoListResponse)
+      .response(todoListResponse),
   );
 
-  app.route(
+  app.add(
     router
       .post("/:name/item/", "createItem")
       .params(paramValidator)
@@ -74,31 +74,31 @@ export function todoModel(app) {
             .max(365)
             .trim()
             .mock("__.sentence({ words: 6 })"),
-        })
+        }),
       )
-      .response(todoListResponse)
+      .response(todoListResponse),
   );
 
-  app.route(
+  app.add(
     router
       .post("/:name/item/toggle", "toggleItem")
       .params(paramValidator)
       .body(
         M.object({
           index: M.number().integer().convert().min(0),
-        })
+        }),
       )
-      .response(todoListResponse)
+      .response(todoListResponse),
   );
 
-  app.route(
+  app.add(
     router
       .delete("/:name", "delete")
       .params(paramValidator)
       .response(
         M.object({
           deleted: M.bool(),
-        })
-      )
+        }),
+      ),
   );
 }

@@ -27,4 +27,3 @@ jobs:
       - run: |
           yarn install
           yarn lbu lint
-          yarn lbu test

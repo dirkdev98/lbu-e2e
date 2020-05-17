@@ -1,6 +1,5 @@
-import { log } from "@lbu/insight";
 import { createBodyParsers, getApp } from "@lbu/server";
-import { AppError, isNil, mainFn } from "@lbu/stdlib";
+import { AppError, isNil } from "@lbu/stdlib";
 import {
   groupMiddleware,
   router,
@@ -9,17 +8,6 @@ import {
 } from "./generated/router.js";
 import { validatorSetErrorFn } from "./generated/validators.js";
 import { TodoStore } from "./services/TodoStore.js";
-
-mainFn(import.meta, log, main);
-
-async function main(logger) {
-  const app = constructApp();
-
-  const port = process.env.PORT || 3000;
-  app.listen(port, () => {
-    logger.info("Listening", { port });
-  });
-}
 
 export function constructApp() {
   const app = getApp({

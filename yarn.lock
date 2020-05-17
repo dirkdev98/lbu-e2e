@@ -94,39 +94,39 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@lbu/cli@0.0.17", "@lbu/cli@^0.0.17":
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/@lbu/cli/-/cli-0.0.17.tgz#7e629effbe0feae4ad02c4ddbd5f389bc619343c"
-  integrity sha512-MYdOw4G2igD0/EO4KTWz0N4G6xBG430IwxHKX+8kHNAFBX/XJZHhHw98ndJ0m18McBJpy2/ldlr7POFzeTf9Ow==
+"@lbu/cli@0.0.19", "@lbu/cli@^0.0.19":
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/@lbu/cli/-/cli-0.0.19.tgz#4cd950e55dff08eddc78616b0a9b1f72f4f8fd59"
+  integrity sha512-DkbZhr7E4G5AKKR5ki0dbjdg+HJyRmrQx5DcaPk4Fl/TaZzVIwaQPs5jRcPbMZ81J3Ve3SIlIdMgGMHfExHtbg==
   dependencies:
-    "@lbu/insight" "^0.0.17"
-    "@lbu/stdlib" "^0.0.17"
+    "@lbu/insight" "^0.0.19"
+    "@lbu/stdlib" "^0.0.19"
     nodemon "2.0.4"
     tape "5.0.0"
 
-"@lbu/code-gen@0.0.17":
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/@lbu/code-gen/-/code-gen-0.0.17.tgz#82e9d51400d40733e82a7620000df500db57c742"
-  integrity sha512-hACMNo+KxQCD6qoN3HnSrNE23LRau6xFnNr5H6jT4gzpE/qWlnRmbQyAjDHsmfKH66Is4ceUcso0E/JrJg6bng==
+"@lbu/code-gen@0.0.19":
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/@lbu/code-gen/-/code-gen-0.0.19.tgz#5caeb2b31dbe51cdf18c53d467f00e4caad1f5f7"
+  integrity sha512-UlTWZXkq4yEbyA6llvll9jyA1+oNN5jdFu1VX7z5BUkxpGTGOEPZfKYqagIQHBcQmnJEbdUoC+HkXGHG9aBxvw==
   dependencies:
-    "@lbu/cli" "^0.0.17"
-    "@lbu/insight" "^0.0.17"
-    "@lbu/stdlib" "^0.0.17"
+    "@lbu/cli" "^0.0.19"
+    "@lbu/insight" "^0.0.19"
+    "@lbu/stdlib" "^0.0.19"
     axios "0.19.2"
     chance "1.1.5"
 
-"@lbu/insight@0.0.17", "@lbu/insight@^0.0.17":
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/@lbu/insight/-/insight-0.0.17.tgz#d7463224192e404c167c5dc8b56bf554b305bece"
-  integrity sha512-KH9Y6U+DCDfuVAiLcruYawbAfzMmD0YCk/3oEoNJ9K5G5kUy3Zq1xH7Wq1qjEFMWC6N3NmlnaXwMLkskiWelcA==
+"@lbu/insight@0.0.19", "@lbu/insight@^0.0.19":
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/@lbu/insight/-/insight-0.0.19.tgz#f9621c9bfc9ca8473b65097d91b341b0d655b22d"
+  integrity sha512-tQ3rcPOMLz1w+LZU9TL7T6L0CMq9CHDDeUYQI4qbuQvb4SMRW+39WDUl27cBZxuijKnOmnsKmyQWenneOQl9CQ==
   dependencies:
     pump "3.0.0"
     split2 "3.1.1"
 
-"@lbu/lint-config@0.0.17":
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/@lbu/lint-config/-/lint-config-0.0.17.tgz#65629925e411d2526f949de08ab2f85e16ba1449"
-  integrity sha512-fX9UZklxDR9M0CEzjS3/HsZeAtXeQeKEb4iWarTfzI/N/AFLInE1sfKkBuD/WvVz5q8YyiickCieySaZgU62Hw==
+"@lbu/lint-config@0.0.19":
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/@lbu/lint-config/-/lint-config-0.0.19.tgz#46267e68e56c007a4f2900d786f53cc16ff43bd5"
+  integrity sha512-bs8rSbwnmbDenf9O48gMThbl8OvecoIl7kEk5soU2D4LBsSuxsCK6ku0M4yude1r19G1k/VTlyqaHBjedWdKPA==
   dependencies:
     babel-eslint "10.1.0"
     eslint "7.0.0"
@@ -135,36 +135,35 @@
     eslint-plugin-prettier "3.1.3"
     prettier "2.0.5"
 
-"@lbu/server@0.0.17":
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/@lbu/server/-/server-0.0.17.tgz#ec08f9675715ba773e2d0361cdaa7a2c8139d0a1"
-  integrity sha512-Da9eR3W7vPSzHTe47HAX4kFRzh2iFLJPS4k3BdABVV3u3Hb5R3rtC8Bh+xulQiosZj1QuIq2bl6qiINgV1c6Rw==
+"@lbu/server@0.0.19":
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/@lbu/server/-/server-0.0.19.tgz#78d6e8a999e6e668502a58a769583a1060c81fa1"
+  integrity sha512-UsKaivHG2we4/xWfojIB1TnIay7T332MWzc1B5fj9ua7ySenOcT4mBSBf+jMzA7K6oOeHAJVZovV0HejQ9zRjA==
   dependencies:
-    "@lbu/insight" "^0.0.17"
-    "@lbu/stdlib" "^0.0.17"
+    "@lbu/insight" "^0.0.19"
+    "@lbu/stdlib" "^0.0.19"
     keygrip "1.1.0"
     koa "2.11.0"
     koa-body "4.1.1"
     koa-compose "4.1.0"
     koa-session "6.0.0"
 
-"@lbu/stdlib@0.0.17", "@lbu/stdlib@^0.0.17":
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/@lbu/stdlib/-/stdlib-0.0.17.tgz#862800d225e9d9fe8086524741a426205ba78a6c"
-  integrity sha512-jFQjOJ+EkdA+E1SDhcaAFgEOmY3R45RxPlgJjJqXgXiIWjGiwMIx3z0nbAsEH4rdQA8CiP3gWu3Bwt34Em1/BA==
+"@lbu/stdlib@0.0.19", "@lbu/stdlib@^0.0.19":
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/@lbu/stdlib/-/stdlib-0.0.19.tgz#4a9ea07bc2d2041110304ac3ceee7e7b45d77847"
+  integrity sha512-kPmsIV+ZCgyuuQz+hRtZbesVuVudwbig4nDxAhMaKnjaIscfNhJlo1ti7AfOpWDSzkcHHItfr5l40VeJe2CX+g==
   dependencies:
-    "@lbu/insight" "^0.0.17"
+    "@lbu/insight" "^0.0.19"
     dotenv "8.2.0"
     lodash.merge "4.6.2"
-    uuid "8.0.0"
 
-"@lbu/store@0.0.17":
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/@lbu/store/-/store-0.0.17.tgz#a56582b6a87417ddc67641dc7a27348b412f3245"
-  integrity sha512-yFviVErjaWOI7EFbhvtGdIMSL0J1Eqwt9ky+tfkP/X1LvLhQXfgOBhge+cAN+CtzfpPDHlMpWci6IT7ckhqJYg==
+"@lbu/store@0.0.19":
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/@lbu/store/-/store-0.0.19.tgz#090de51cdcae42d373060e34045672cbcb963c22"
+  integrity sha512-20yTdxWi+CoDKDiKeJtqYKd5AbhhMJzrckSnQUOI0/6AlR8ZSQzDdMJtaN1gT+oO9Ug5CFR4RkPpuHvpbinQAw==
   dependencies:
-    "@lbu/insight" "^0.0.17"
-    "@lbu/stdlib" "^0.0.17"
+    "@lbu/insight" "^0.0.19"
+    "@lbu/stdlib" "^0.0.19"
     mime-types "2.1.27"
     minio "7.0.16"
     postgres "1.0.2"
@@ -473,11 +472,6 @@ chalk@^4.0.0:
   dependencies:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
-
-chance@1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/chance/-/chance-1.1.4.tgz#d8743bf8e40bb05e024c305ca1ff441195eb23db"
-  integrity sha512-pXPDSu3knKlb6H7ahQfpq//J9mSOxYK8SMtp8MV/nRJh8aLRDIl0ipLH8At8+nVogVwtvPZzyIzY/EbcY/cLuQ==
 
 chance@1.1.5:
   version "1.1.5"
@@ -2690,11 +2684,6 @@ util-deprecate@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=
-
-uuid@8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.0.0.tgz#bc6ccf91b5ff0ac07bbcdbf1c7c4e150db4dbb6c"
-  integrity sha512-jOXGuXZAWdsTH7eZLtyXMqUb9EcWMGZNbL9YcGBJl4MH4nrxHmZJhEHvyLFrkxo+28uLb/NYRcStH48fnD0Vzw==
 
 uuid@^3.3.2:
   version "3.4.0"

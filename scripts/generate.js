@@ -26,6 +26,5 @@ async function main() {
   await app.generate({
     outputDirectory: "./src/generated",
     useTypescript: false,
-    dumpStructure: true,
   });
 }

@@ -9,7 +9,7 @@ export function unimplementedModel(app) {
 
   const userModel = M.object("User", {
     id: M.uuid(),
-    name: M.string().mock("__.first() + ' ' + __.last()"),
+    name: M.string().mock(`__.first() + " " + __.last()`),
     age: M.number().integer().mock("__.age()"),
   });
 
@@ -18,7 +18,7 @@ export function unimplementedModel(app) {
     preferredNumber: M.number().integer().convert().min(0).max(10),
     direction: M.string("WindDirection")
       .oneOf("NORTH", "EAST", "SOUTH", "WEST")
-      .default("'NORTH'"),
+      .default(`"NORTH"`),
     totalMess: M.array(
       M.anyOf([
         M.number().optional().min(1).max(150),

@@ -57,7 +57,7 @@ export function todoModel(app) {
             .min(1)
             .max(40)
             .trim()
-            .mock("'Todo ' + __.integer({ min: 0, max: 1000 })"),
+            .mock(`"Todo " + __.integer({ min: 0, max: 1000 })`),
         }),
       )
       .response(todoListResponse),

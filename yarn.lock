@@ -104,38 +104,38 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.2.tgz#26520bf09abe4a5644cd5414e37125a8954241dd"
   integrity sha512-tsAQNx32a8CoFhjhijUIhI4kccIAgmGhy8LZMZgGfmXcpMbPRUqn5LWmgRttILi6yeGmBJd2xsPkFMs0PzgPCw==
 
-"@lbu/cli@0.0.32":
-  version "0.0.32"
-  resolved "https://registry.yarnpkg.com/@lbu/cli/-/cli-0.0.32.tgz#526e051235dfdd52e2d699b3d91ad63fcb1ea2d5"
-  integrity sha512-KwdbvLiO1vo6sGHe3fZC1cj6bxEU9YZgdAJPFnKAd8oCrSbzw26xuUSesp/7HEVt00dmAGSUvEGNfI0B04Bv3Q==
+"@lbu/cli@0.0.33":
+  version "0.0.33"
+  resolved "https://registry.yarnpkg.com/@lbu/cli/-/cli-0.0.33.tgz#118ccd2102fda779b01b5a86fe261312d6b0bf76"
+  integrity sha512-c3FAl1Zg63b8JDPgFXroge+qjtxhE5H/cocGWjSfmK8mTxYGgIe0c8x/I3LNtT3CqiPLEPVi7pGtrt4wti92Pw==
   dependencies:
-    "@lbu/insight" "0.0.32"
-    "@lbu/stdlib" "0.0.32"
+    "@lbu/insight" "0.0.33"
+    "@lbu/stdlib" "0.0.33"
     c8 "7.2.0"
     nodemon "2.0.4"
     tape "5.0.1"
 
-"@lbu/code-gen@0.0.32":
-  version "0.0.32"
-  resolved "https://registry.yarnpkg.com/@lbu/code-gen/-/code-gen-0.0.32.tgz#d9700839150e2262d84b49d8c0220f2e79c4913b"
-  integrity sha512-H9oXPcFv/lNUvA8sNvaNPcZmiQsUSAYpVPydD4ZN3THJpEtr13omM3bw1B/GRtycl1JN+vLWKj6mYdcwRSpyNA==
+"@lbu/code-gen@0.0.33":
+  version "0.0.33"
+  resolved "https://registry.yarnpkg.com/@lbu/code-gen/-/code-gen-0.0.33.tgz#c5577b87006ccd5ea4c95a66f6827e1f3470a775"
+  integrity sha512-QCklJq4jwnYDnW0Pc27VuXqb+8Tccr/mZtfPrrnkko8PsESzpqRlbQupv1uUZvDL6vlOp+fsEKAky0XkLnm4eQ==
   dependencies:
-    "@lbu/cli" "0.0.32"
-    "@lbu/insight" "0.0.32"
-    "@lbu/stdlib" "0.0.32"
+    "@lbu/cli" "0.0.33"
+    "@lbu/insight" "0.0.33"
+    "@lbu/stdlib" "0.0.33"
 
-"@lbu/insight@0.0.32":
-  version "0.0.32"
-  resolved "https://registry.yarnpkg.com/@lbu/insight/-/insight-0.0.32.tgz#e472c50a525b00ce6651cc2c222af235dfe19d36"
-  integrity sha512-d7olRikQScVe7Nv0rPyBooLz42nRQ9Q7+6Zo2k62GqEhQxT/9jnxx1ANJgExYehweq9YLJ0/bih5ygdxXGqo7w==
+"@lbu/insight@0.0.33":
+  version "0.0.33"
+  resolved "https://registry.yarnpkg.com/@lbu/insight/-/insight-0.0.33.tgz#3698202844af56fb73244fa867424e6dc5f50571"
+  integrity sha512-8KYCjCED5jcm2Mblm7Z9BMMtyEghz8uu1XYZOG6VQsVuueV8JoCA5GMih1lfr65hrUZ4an8NJoG9csRd3VIlAw==
   dependencies:
     pump "3.0.0"
     split2 "3.1.1"
 
-"@lbu/lint-config@0.0.32":
-  version "0.0.32"
-  resolved "https://registry.yarnpkg.com/@lbu/lint-config/-/lint-config-0.0.32.tgz#33bff7c0e9e416dbe31c132e430739f687587823"
-  integrity sha512-aYBJHLFX5OuwcjaIDcTyHlEsL7BrEi+Hbo7Spld1Hk3kyIzA6RUvqYZvqYEvOIW32X+JeNmZezvz1yROQmhyPA==
+"@lbu/lint-config@0.0.33":
+  version "0.0.33"
+  resolved "https://registry.yarnpkg.com/@lbu/lint-config/-/lint-config-0.0.33.tgz#6e4c400bc1f394a9e89411c882c3304d237a39d5"
+  integrity sha512-1BEx+fG2KiUnsGPIw8wb7badfc8vLYrx1KBPKS0Ov+SRBUIwqGVvoJHmAA3rYPbDRhrOyC8/qrSt3HNjZzwvFw==
   dependencies:
     babel-eslint "10.1.0"
     eslint "7.3.1"
@@ -144,36 +144,36 @@
     eslint-plugin-prettier "3.1.4"
     prettier "2.0.5"
 
-"@lbu/server@0.0.32":
-  version "0.0.32"
-  resolved "https://registry.yarnpkg.com/@lbu/server/-/server-0.0.32.tgz#a5c7815e910d2988d0a376688f0aad1103a06fb5"
-  integrity sha512-jM5fTDUy4QXTaLs2EnIYrzJP3WW7qAI7Ku2MG8kBk47Yo4/gL9oXaJAIVQWGUi+zwlmWh4JHZo7wWKdzUv4iQQ==
+"@lbu/server@0.0.33":
+  version "0.0.33"
+  resolved "https://registry.yarnpkg.com/@lbu/server/-/server-0.0.33.tgz#995cbc21f8f20c9c13fb3e5c7c69dde8047352ec"
+  integrity sha512-qiAvcbIvNnJKcENjuEwENdkiw758pvTnG/LrWMIvFE3xB+hRZcb+CqOSb4s32MxOZK8YlGoMRdLNfH4j6tOqgw==
   dependencies:
-    "@lbu/insight" "0.0.32"
-    "@lbu/stdlib" "0.0.32"
+    "@lbu/insight" "0.0.33"
+    "@lbu/stdlib" "0.0.33"
     keygrip "1.1.0"
     koa "2.13.0"
     koa-body "4.2.0"
     koa-compose "4.1.0"
     koa-session "6.0.0"
 
-"@lbu/stdlib@0.0.32":
-  version "0.0.32"
-  resolved "https://registry.yarnpkg.com/@lbu/stdlib/-/stdlib-0.0.32.tgz#484ab4a61cd65fd8536bf59a91af50540afdd6f0"
-  integrity sha512-LvQK2DAp9FLbjtCyLW3m5pAMU/Vo6BJZePdstQdBWPUk8vgxsR//G9VHuJ8QihU8r1xGveH60Ha8YVMZfojeZQ==
+"@lbu/stdlib@0.0.33":
+  version "0.0.33"
+  resolved "https://registry.yarnpkg.com/@lbu/stdlib/-/stdlib-0.0.33.tgz#39ee82ff2c140cec5cf8232af8d6f59e9ac16c1a"
+  integrity sha512-vjnAh4xUJP8Az6QEQskM3ef9Qm5Fy2I+h1kM1gsVMeKT3ql+64/HE57JLrkNQwrKE2KrPca4LmCBNiLHxQwJ7Q==
   dependencies:
-    "@lbu/insight" "0.0.32"
+    "@lbu/insight" "0.0.33"
     "@types/node" "14.0.14"
     dotenv "8.2.0"
     lodash.merge "4.6.2"
 
-"@lbu/store@0.0.32":
-  version "0.0.32"
-  resolved "https://registry.yarnpkg.com/@lbu/store/-/store-0.0.32.tgz#49ae7e1d56701908923c9403d3da50dfac60979a"
-  integrity sha512-VrYVRts3sOOZ96psbqWgwUHs11pxtXMteoUfUku8CkIysZhL1lyVDSnljuRmcZd+VJ5qn/QPT1S1QnLhjlnAOQ==
+"@lbu/store@0.0.33":
+  version "0.0.33"
+  resolved "https://registry.yarnpkg.com/@lbu/store/-/store-0.0.33.tgz#aef4f21a898bba11d78660ce5b1cb447f59a886a"
+  integrity sha512-f1gHeQN4/k45oVYBRwW6cnugl8fcd19O2dU+sRsD9pK1qGzTgUzSWQc92YcUOtnX3K9WyPdh5SZrbI1i5Fmmkg==
   dependencies:
-    "@lbu/insight" "0.0.32"
-    "@lbu/stdlib" "0.0.32"
+    "@lbu/insight" "0.0.33"
+    "@lbu/stdlib" "0.0.33"
     mime-types "2.1.27"
     minio "7.0.16"
     postgres "1.0.2"

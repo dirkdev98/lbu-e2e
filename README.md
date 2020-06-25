@@ -1,6 +1,6 @@
 # lbu-e2e backend
 
-Backend powered by lbu version 0.0.32.
+Backend powered by lbu version 0.0.33.
 
 For more information on LBU see the
 [docs](https://github.com/lightbasenl/lbu/tree/master/docs)

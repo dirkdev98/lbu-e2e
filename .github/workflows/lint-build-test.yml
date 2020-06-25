@@ -33,4 +33,3 @@ jobs:
       - run: |
           yarn
           yarn lbu lint
-          yarn lbu test

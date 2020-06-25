@@ -1,29 +1,28 @@
 {
+  "name": "lbu-e2e",
   "private": true,
   "license": "MIT",
-  "name": "lbu-e2e",
   "type": "module",
   "scripts": {
     "start": "NODE_ENV=production node ./scripts/api.js"
   },
   "dependencies": {
-    "@lbu/insight": "0.0.19",
-    "@lbu/server": "0.0.19",
-    "@lbu/stdlib": "0.0.19",
-    "@lbu/store": "0.0.19",
+    "@lbu/insight": "0.0.32",
+    "@lbu/server": "0.0.32",
+    "@lbu/stdlib": "0.0.32",
+    "@lbu/store": "0.0.32",
     "axios": "0.19.2",
-    "chance": "1.1.5"
+    "chance": "1.1.6"
   },
   "devDependencies": {
-    "@lbu/cli": "0.0.19",
-    "@lbu/code-gen": "0.0.19",
-    "@lbu/lint-config": "0.0.19",
-    "tape": "5.0.0"
+    "@lbu/cli": "0.0.32",
+    "@lbu/code-gen": "0.0.32",
+    "@lbu/lint-config": "0.0.32"
   },
   "prettier": "@lbu/lint-config/prettierrc",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lightbasenl/lbu.git"
+    "url": "https://github.com/dirkdev98/lbu-e2e.git"
   },
   "engines": {
     "node": ">=14"

@@ -1,4 +1,4 @@
-import { createBodyParsers, getApp } from "@lbu/server";
+import { getApp } from "@lbu/server";
 import { AppError, isNil } from "@lbu/stdlib";
 import {
   groupMiddleware,
@@ -7,26 +7,37 @@ import {
   todoHandlers,
 } from "./generated/router.js";
 import { validatorSetErrorFn } from "./generated/validators.js";
-import { TodoStore } from "./services/TodoStore.js";
+import { app, bodyParsers, todoStore } from "./services/index.js";
 
-export function constructApp() {
-  const app = getApp({
+/**
+ * Create a basic LBU app
+ */
+export function createApp() {
+  return getApp({
     errorOptions: {
-      leakError: true,
+      leakError: process.env.NODE_ENV !== "production",
     },
     headers: {
       cors: {
-        origin: (ctx) =>
-          ctx.get("origin") === "http://localhost:3000" ||
-          ctx.get("origin") === "https://lbu-e2e.lightbase.nl",
+        origin: (ctx) => {
+          if (
+            ctx.get("origin") === "http://localhost:3000" ||
+            ctx.get("origin") === "https://lbu-e2e.lightbase.nl"
+          ) {
+            return ctx.get("origin");
+          }
+          return false;
+        },
       },
     },
     proxy: process.env.NODE_ENV === "production",
   });
+}
 
+export function constructApp() {
   validatorSetErrorFn(AppError.validationError);
-  const { bodyParser } = createBodyParsers({});
-  setBodyParser(bodyParser);
+  setBodyParser(bodyParsers.bodyParser);
+
   app.use(router);
 
   mountHandlers();
@@ -35,9 +46,8 @@ export function constructApp() {
 }
 
 function mountHandlers() {
-  const store = new TodoStore();
   groupMiddleware.todo = (ctx, next) => {
-    ctx.user = store.get(ctx.request.ip);
+    ctx.user = todoStore.get(ctx.request.ip);
 
     return next();
   };

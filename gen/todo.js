@@ -1,8 +1,8 @@
+import { TypeCreator } from "@lbu/code-gen";
+
 /**
  * @param {App} app
  */
-import { TypeCreator } from "@lbu/code-gen";
-
 export function todoModel(app) {
   const M = new TypeCreator("todo");
 
@@ -10,7 +10,7 @@ export function todoModel(app) {
     name: M.string(),
     items: M.array(
       M.object("Item", {
-        completed: M.bool().default(false),
+        completed: M.bool().default("false"),
         name: M.string(),
       }),
     ),

@@ -1,8 +1,8 @@
+import { TypeCreator } from "@lbu/code-gen";
+
 /**
  * @param {App} app
  */
-import { TypeCreator } from "@lbu/code-gen";
-
 export function unimplementedModel(app) {
   const M = new TypeCreator("unimplemented");
   const router = M.router("/unimplemented");

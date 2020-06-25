@@ -1,30 +1,21 @@
-import { App, generators } from "@lbu/code-gen";
+import { App } from "@lbu/code-gen";
 import { log } from "@lbu/insight";
 import { mainFn } from "@lbu/stdlib";
-import { todoModel, unimplementedModel } from "../src/gen/index.js";
+import { extendWithInternal } from "../gen/index.js";
 
 mainFn(import.meta, log, main);
 
 export const nodemonArgs = "--ignore src/generated";
 
 async function main() {
-  const app = new App({
-    generators: [
-      generators.type,
-      generators.validator,
-      generators.mock,
-      generators.router,
-      generators.apiClient,
-    ],
-    verbose: true,
-  });
-  await app.init();
+  const app = await App.new({ verbose: true });
 
-  todoModel(app);
-  unimplementedModel(app);
+  extendWithInternal(app);
 
   await app.generate({
     outputDirectory: "./src/generated",
     useTypescript: false,
+    dumpStructure: true,
+    enabledGenerators: ["type", "validator", "router", "mock", "apiClient"],
   });
 }

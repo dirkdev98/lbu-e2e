@@ -1,3 +1,15 @@
+/**
+ * @type {TodoStore}
+ */
+import { serviceLogger } from "./loggers.js";
+
+export let todoStore = undefined;
+
+export function setTodoStore(store) {
+  serviceLogger.info("setting todoStore");
+  todoStore = store;
+}
+
 export class TodoStore {
   constructor() {
     /**

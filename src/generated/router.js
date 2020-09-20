@@ -3,166 +3,176 @@
 
 import { compose } from "@lbu/server";
 import { AppError } from "@lbu/stdlib";
-import {
-  todoValidators,
-  unimplementedValidators,
-  lbuValidators,
-} from "./validators.js";
+import { structureString } from "./structure.js";
+import { lbuValidators, todoValidators } from "./validators.js";
 
-let _internalBodyParser = undefined;
-export function setBodyParser(parser) {
-  _internalBodyParser = (ctx) => new Promise((r) => parser(ctx, r).then(r));
-}
-
-function parseBody(ctx) {
-  return _internalBodyParser(ctx);
+let internalBodyParsers = undefined;
+/**
+ * @param {BodyParserPair} parsers
+ */
+export function setBodyParsers(parsers) {
+  internalBodyParsers = {
+    body: (ctx) =>
+      new Promise((r) => {
+        parsers.bodyParser(ctx, r).then(r);
+      }),
+    files: (ctx) =>
+      new Promise((r) => {
+        parsers.multipartBodyParser(ctx, r).then(r);
+      }),
+  };
 }
 
 const filterCompose = (...args) =>
   compose(args.filter((it) => it !== undefined));
 
-export const tagMiddleware = {
-  _lbu: undefined,
-};
-
+/**
+ * @name GroupMiddleware
+ * @typedef {object}
+ * @property {Middleware|Middleware[]|undefined} lbu
+ * @property {Middleware|Middleware[]|undefined} todo
+ */
+/**
+ * @type {GroupMiddleware}
+ */
 export const groupMiddleware = {
-  todo: undefined,
-  unimplemented: undefined,
   lbu: undefined,
+  todo: undefined,
 };
 
 const _composed = {
-  TodoAll: undefined,
-  TodoOne: undefined,
-  TodoNew: undefined,
-  TodoCreateItem: undefined,
-  TodoToggleItem: undefined,
-  TodoDelete: undefined,
-  UnimplementedGetUser: undefined,
-  UnimplementedSettings: undefined,
   LbuStructure: undefined,
+  TodoAll: undefined,
+  TodoCreateItem: undefined,
+  TodoDelete: undefined,
+  TodoNew: undefined,
+  TodoOne: undefined,
+  TodoToggleItem: undefined,
 };
 
 const handlers = {
+  LbuStructure: function (params, ctx, next) {
+    ctx.request.params = params;
+    if (_composed.LbuStructure === undefined) {
+      const currentHandler = lbuHandlers.structure;
+      _composed.LbuStructure = filterCompose(
+        ...(Array.isArray(groupMiddleware.lbu)
+          ? groupMiddleware.lbu
+          : [groupMiddleware.lbu]),
+        ...(Array.isArray(currentHandler) ? currentHandler : [currentHandler]),
+      );
+    }
+    return _composed.LbuStructure(ctx, next);
+  },
+
   TodoAll: function (params, ctx, next) {
     ctx.request.params = params;
     if (_composed.TodoAll === undefined) {
       const currentHandler = todoHandlers.all;
       _composed.TodoAll = filterCompose(
-        groupMiddleware.todo,
+        ...(Array.isArray(groupMiddleware.todo)
+          ? groupMiddleware.todo
+          : [groupMiddleware.todo]),
         ...(Array.isArray(currentHandler) ? currentHandler : [currentHandler]),
       );
     }
     return _composed.TodoAll(ctx, next);
   },
 
-  TodoOne: function (params, ctx, next) {
-    ctx.request.params = params;
-    ctx.validatedParams = todoValidators.nameParam(params);
-    if (_composed.TodoOne === undefined) {
-      const currentHandler = todoHandlers.one;
-      _composed.TodoOne = filterCompose(
-        groupMiddleware.todo,
-        ...(Array.isArray(currentHandler) ? currentHandler : [currentHandler]),
-      );
-    }
-    return _composed.TodoOne(ctx, next);
-  },
-
-  TodoNew: async function (params, ctx, next) {
-    ctx.request.params = params;
-    await parseBody(ctx);
-    ctx.validatedBody = todoValidators.newBody(ctx.request.body);
-    if (_composed.TodoNew === undefined) {
-      const currentHandler = todoHandlers.new;
-      _composed.TodoNew = filterCompose(
-        groupMiddleware.todo,
-        ...(Array.isArray(currentHandler) ? currentHandler : [currentHandler]),
-      );
-    }
-    return _composed.TodoNew(ctx, next);
-  },
-
   TodoCreateItem: async function (params, ctx, next) {
     ctx.request.params = params;
-    ctx.validatedParams = todoValidators.nameParam(params);
-    await parseBody(ctx);
+    ctx.validatedParams = todoValidators.createItemParams(params);
+    await internalBodyParsers.body(ctx);
     ctx.validatedBody = todoValidators.createItemBody(ctx.request.body);
     if (_composed.TodoCreateItem === undefined) {
       const currentHandler = todoHandlers.createItem;
       _composed.TodoCreateItem = filterCompose(
-        groupMiddleware.todo,
+        ...(Array.isArray(groupMiddleware.todo)
+          ? groupMiddleware.todo
+          : [groupMiddleware.todo]),
         ...(Array.isArray(currentHandler) ? currentHandler : [currentHandler]),
       );
     }
     return _composed.TodoCreateItem(ctx, next);
   },
 
-  TodoToggleItem: async function (params, ctx, next) {
-    ctx.request.params = params;
-    ctx.validatedParams = todoValidators.nameParam(params);
-    await parseBody(ctx);
-    ctx.validatedBody = todoValidators.toggleItemBody(ctx.request.body);
-    if (_composed.TodoToggleItem === undefined) {
-      const currentHandler = todoHandlers.toggleItem;
-      _composed.TodoToggleItem = filterCompose(
-        groupMiddleware.todo,
-        ...(Array.isArray(currentHandler) ? currentHandler : [currentHandler]),
-      );
-    }
-    return _composed.TodoToggleItem(ctx, next);
-  },
-
   TodoDelete: function (params, ctx, next) {
     ctx.request.params = params;
-    ctx.validatedParams = todoValidators.nameParam(params);
+    ctx.validatedParams = todoValidators.deleteParams(params);
     if (_composed.TodoDelete === undefined) {
       const currentHandler = todoHandlers.delete;
       _composed.TodoDelete = filterCompose(
-        groupMiddleware.todo,
+        ...(Array.isArray(groupMiddleware.todo)
+          ? groupMiddleware.todo
+          : [groupMiddleware.todo]),
         ...(Array.isArray(currentHandler) ? currentHandler : [currentHandler]),
       );
     }
     return _composed.TodoDelete(ctx, next);
   },
 
-  UnimplementedGetUser: function (params, ctx, next) {
+  TodoNew: async function (params, ctx, next) {
     ctx.request.params = params;
-    if (_composed.UnimplementedGetUser === undefined) {
-      const currentHandler = unimplementedHandlers.getUser;
-      _composed.UnimplementedGetUser = filterCompose(
-        groupMiddleware.unimplemented,
+    await internalBodyParsers.body(ctx);
+    ctx.validatedBody = todoValidators.newBody(ctx.request.body);
+    if (_composed.TodoNew === undefined) {
+      const currentHandler = todoHandlers.new;
+      _composed.TodoNew = filterCompose(
+        ...(Array.isArray(groupMiddleware.todo)
+          ? groupMiddleware.todo
+          : [groupMiddleware.todo]),
         ...(Array.isArray(currentHandler) ? currentHandler : [currentHandler]),
       );
     }
-    return _composed.UnimplementedGetUser(ctx, next);
+    return _composed.TodoNew(ctx, next);
   },
 
-  UnimplementedSettings: function (params, ctx, next) {
+  TodoOne: function (params, ctx, next) {
     ctx.request.params = params;
-    if (_composed.UnimplementedSettings === undefined) {
-      const currentHandler = unimplementedHandlers.settings;
-      _composed.UnimplementedSettings = filterCompose(
-        groupMiddleware.unimplemented,
+    ctx.validatedParams = todoValidators.oneParams(params);
+    if (_composed.TodoOne === undefined) {
+      const currentHandler = todoHandlers.one;
+      _composed.TodoOne = filterCompose(
+        ...(Array.isArray(groupMiddleware.todo)
+          ? groupMiddleware.todo
+          : [groupMiddleware.todo]),
         ...(Array.isArray(currentHandler) ? currentHandler : [currentHandler]),
       );
     }
-    return _composed.UnimplementedSettings(ctx, next);
+    return _composed.TodoOne(ctx, next);
   },
 
-  LbuStructure: function (params, ctx, next) {
+  TodoToggleItem: async function (params, ctx, next) {
     ctx.request.params = params;
-    if (_composed.LbuStructure === undefined) {
-      const currentHandler = lbuHandlers.structure;
-      _composed.LbuStructure = filterCompose(
-        tagMiddleware._lbu,
-        groupMiddleware.lbu,
+    ctx.validatedParams = todoValidators.toggleItemParams(params);
+    await internalBodyParsers.body(ctx);
+    ctx.validatedBody = todoValidators.toggleItemBody(ctx.request.body);
+    if (_composed.TodoToggleItem === undefined) {
+      const currentHandler = todoHandlers.toggleItem;
+      _composed.TodoToggleItem = filterCompose(
+        ...(Array.isArray(groupMiddleware.todo)
+          ? groupMiddleware.todo
+          : [groupMiddleware.todo]),
         ...(Array.isArray(currentHandler) ? currentHandler : [currentHandler]),
       );
     }
-    return _composed.LbuStructure(ctx, next);
+    return _composed.TodoToggleItem(ctx, next);
   },
 };
+
+/**
+ * @name LbuStructureCtx
+ * @typedef {object & Context}
+ * @property {Logger} log
+ * @property { LbuStructureResponse } body
+ */
+
+/**
+ * @callback LbuStructureFn
+ * @param { LbuStructureCtx} ctx
+ * @param {Function} next
+ * @returns {void|Promise<void>}
+ */
 
 /**
  * @name TodoAllCtx
@@ -179,41 +189,11 @@ const handlers = {
  */
 
 /**
- * @name TodoOneCtx
- * @typedef {object & Context}
- * @property {Logger} log
- * @property { TodoListResponse } body
- * @property { TodoNameParam } validatedParams
- */
-
-/**
- * @callback TodoOneFn
- * @param { TodoOneCtx} ctx
- * @param {Function} next
- * @returns {void|Promise<void>}
- */
-
-/**
- * @name TodoNewCtx
- * @typedef {object & Context}
- * @property {Logger} log
- * @property { TodoListResponse } body
- * @property { TodoNewBody } validatedBody
- */
-
-/**
- * @callback TodoNewFn
- * @param { TodoNewCtx} ctx
- * @param {Function} next
- * @returns {void|Promise<void>}
- */
-
-/**
  * @name TodoCreateItemCtx
  * @typedef {object & Context}
  * @property {Logger} log
- * @property { TodoListResponse } body
- * @property { TodoNameParam } validatedParams
+ * @property { TodoCreateItemResponse } body
+ * @property { TodoCreateItemParams } validatedParams
  * @property { TodoCreateItemBody } validatedBody
  */
 
@@ -225,27 +205,11 @@ const handlers = {
  */
 
 /**
- * @name TodoToggleItemCtx
- * @typedef {object & Context}
- * @property {Logger} log
- * @property { TodoListResponse } body
- * @property { TodoNameParam } validatedParams
- * @property { TodoToggleItemBody } validatedBody
- */
-
-/**
- * @callback TodoToggleItemFn
- * @param { TodoToggleItemCtx} ctx
- * @param {Function} next
- * @returns {void|Promise<void>}
- */
-
-/**
  * @name TodoDeleteCtx
  * @typedef {object & Context}
  * @property {Logger} log
  * @property { TodoDeleteResponse } body
- * @property { TodoNameParam } validatedParams
+ * @property { TodoDeleteParams } validatedParams
  */
 
 /**
@@ -256,137 +220,50 @@ const handlers = {
  */
 
 /**
- * @name UnimplementedGetUserCtx
+ * @name TodoNewCtx
  * @typedef {object & Context}
  * @property {Logger} log
- * @property { UnimplementedUser } body
+ * @property { TodoNewResponse } body
+ * @property { TodoNewBody } validatedBody
  */
 
 /**
- * @callback UnimplementedGetUserFn
- * @param { UnimplementedGetUserCtx} ctx
+ * @callback TodoNewFn
+ * @param { TodoNewCtx} ctx
  * @param {Function} next
  * @returns {void|Promise<void>}
  */
 
 /**
- * @name UnimplementedSettingsCtx
+ * @name TodoOneCtx
  * @typedef {object & Context}
  * @property {Logger} log
- * @property { UnimplementedSettingsResponse } body
+ * @property { TodoOneResponse } body
+ * @property { TodoOneParams } validatedParams
  */
 
 /**
- * @callback UnimplementedSettingsFn
- * @param { UnimplementedSettingsCtx} ctx
+ * @callback TodoOneFn
+ * @param { TodoOneCtx} ctx
  * @param {Function} next
  * @returns {void|Promise<void>}
  */
 
 /**
- * @name LbuStructureCtx
+ * @name TodoToggleItemCtx
  * @typedef {object & Context}
  * @property {Logger} log
+ * @property { TodoToggleItemResponse } body
+ * @property { TodoToggleItemParams } validatedParams
+ * @property { TodoToggleItemBody } validatedBody
  */
 
 /**
- * @callback LbuStructureFn
- * @param { LbuStructureCtx} ctx
+ * @callback TodoToggleItemFn
+ * @param { TodoToggleItemCtx} ctx
  * @param {Function} next
  * @returns {void|Promise<void>}
  */
-
-/**
- * @type { {
- * all: (TodoAllFn|TodoAllFn[]),
- * one: (TodoOneFn|TodoOneFn[]),
- * new: (TodoNewFn|TodoNewFn[]),
- * createItem: (TodoCreateItemFn|TodoCreateItemFn[]),
- * toggleItem: (TodoToggleItemFn|TodoToggleItemFn[]),
- * delete: (TodoDeleteFn|TodoDeleteFn[]),
- * } }
- */
-export const todoHandlers = {
-  /**
-   *
-   * Tags:
-   * GET todo/
-   */
-  all: (ctx, next) => {
-    throw AppError.notImplemented();
-  },
-
-  /**
-   *
-   * Tags:
-   * GET todo/:name
-   */
-  one: (ctx, next) => {
-    throw AppError.notImplemented();
-  },
-
-  /**
-   *
-   * Tags:
-   * POST todo/
-   */
-  new: (ctx, next) => {
-    throw AppError.notImplemented();
-  },
-
-  /**
-   *
-   * Tags:
-   * POST todo/:name/item/
-   */
-  createItem: (ctx, next) => {
-    throw AppError.notImplemented();
-  },
-
-  /**
-   *
-   * Tags:
-   * POST todo/:name/item/toggle
-   */
-  toggleItem: (ctx, next) => {
-    throw AppError.notImplemented();
-  },
-
-  /**
-   *
-   * Tags:
-   * DELETE todo/:name
-   */
-  delete: (ctx, next) => {
-    throw AppError.notImplemented();
-  },
-};
-
-/**
- * @type { {
- * getUser: (UnimplementedGetUserFn|UnimplementedGetUserFn[]),
- * settings: (UnimplementedSettingsFn|UnimplementedSettingsFn[]),
- * } }
- */
-export const unimplementedHandlers = {
-  /**
-   *
-   * Tags:
-   * GET unimplemented/user
-   */
-  getUser: (ctx, next) => {
-    throw AppError.notImplemented();
-  },
-
-  /**
-   *
-   * Tags:
-   * GET unimplemented/settings
-   */
-  settings: (ctx, next) => {
-    throw AppError.notImplemented();
-  },
-};
 
 /**
  * @type { {
@@ -404,6 +281,84 @@ export const lbuHandlers = {
   },
 };
 
+export const lbuTags = {
+  structure: ["_lbu"],
+};
+
+/**
+ * @type { {
+ * all: (TodoAllFn|TodoAllFn[]),
+ * createItem: (TodoCreateItemFn|TodoCreateItemFn[]),
+ * delete: (TodoDeleteFn|TodoDeleteFn[]),
+ * new: (TodoNewFn|TodoNewFn[]),
+ * one: (TodoOneFn|TodoOneFn[]),
+ * toggleItem: (TodoToggleItemFn|TodoToggleItemFn[]),
+ * } }
+ */
+export const todoHandlers = {
+  /**
+   *
+   * GET todo/
+   */
+  all: (ctx, next) => {
+    throw AppError.notImplemented();
+  },
+
+  /**
+   *
+   * POST todo/:name/item/
+   */
+  createItem: (ctx, next) => {
+    throw AppError.notImplemented();
+  },
+
+  /**
+   *
+   * DELETE todo/:name
+   */
+  delete: (ctx, next) => {
+    throw AppError.notImplemented();
+  },
+
+  /**
+   *
+   * POST todo/
+   */
+  new: (ctx, next) => {
+    throw AppError.notImplemented();
+  },
+
+  /**
+   *
+   * GET todo/:name
+   */
+  one: (ctx, next) => {
+    throw AppError.notImplemented();
+  },
+
+  /**
+   *
+   * POST todo/:name/item/toggle
+   */
+  toggleItem: (ctx, next) => {
+    throw AppError.notImplemented();
+  },
+};
+
+export const todoTags = {
+  all: [],
+
+  createItem: [],
+
+  delete: [],
+
+  new: [],
+
+  one: [],
+
+  toggleItem: [],
+};
+
 export function router(ctx, next) {
   let triePath = ctx.method + ctx.path;
   if (triePath.endsWith("/")) {
@@ -419,19 +374,11 @@ export function router(ctx, next) {
   if (route !== undefined) {
     return route(params, ctx, next);
   }
-  route = routeMatcher2(triePath, params, 0);
-  if (route !== undefined) {
-    return route(params, ctx, next);
-  }
   route = routeMatcher3(triePath, params, 0);
   if (route !== undefined) {
     return route(params, ctx, next);
   }
-  route = routeMatcher5(triePath, params, 0);
-  if (route !== undefined) {
-    return route(params, ctx, next);
-  }
-  route = routeMatcher9(triePath, params, 0);
+  route = routeMatcher7(triePath, params, 0);
   if (route !== undefined) {
     return route(params, ctx, next);
   }
@@ -440,30 +387,17 @@ export function router(ctx, next) {
 
 lbuHandlers.structure = (ctx, next) => {
   ctx.set("Content-Type", "application/json");
-  ctx.body =
-    '{"todo":{"list":{"type":"object","group":"todo","name":"list","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"strict":false},"keys":{"name":{"type":"string","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"convert":false,"trim":false,"lowerCase":false,"upperCase":false}},"items":{"type":"array","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"convert":false},"values":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"item","uniqueName":"TodoItem"}}}},"uniqueName":"TodoList"},"collection":{"type":"generic","group":"todo","name":"collection","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"keys":{"type":"string","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"convert":false,"trim":false,"lowerCase":false,"upperCase":false}},"values":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"list","uniqueName":"TodoList"}},"uniqueName":"TodoCollection"},"all":{"type":"route","group":"todo","name":"all","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"method":"GET","path":"todo/","tags":[],"response":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"allResponse","uniqueName":"TodoAllResponse"}},"uniqueName":"TodoAll"},"one":{"type":"route","group":"todo","name":"one","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"method":"GET","path":"todo/:name","tags":[],"params":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"nameParam","uniqueName":"TodoNameParam"}},"response":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"listResponse","uniqueName":"TodoListResponse"}},"uniqueName":"TodoOne"},"new":{"type":"route","group":"todo","name":"new","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"method":"POST","path":"todo/","tags":[],"body":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"newBody","uniqueName":"TodoNewBody"}},"response":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"listResponse","uniqueName":"TodoListResponse"}},"uniqueName":"TodoNew"},"createItem":{"type":"route","group":"todo","name":"createItem","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"method":"POST","path":"todo/:name/item/","tags":[],"params":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"nameParam","uniqueName":"TodoNameParam"}},"body":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"createItemBody","uniqueName":"TodoCreateItemBody"}},"response":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"listResponse","uniqueName":"TodoListResponse"}},"uniqueName":"TodoCreateItem"},"toggleItem":{"type":"route","group":"todo","name":"toggleItem","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"method":"POST","path":"todo/:name/item/toggle","tags":[],"params":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"nameParam","uniqueName":"TodoNameParam"}},"body":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"toggleItemBody","uniqueName":"TodoToggleItemBody"}},"response":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"listResponse","uniqueName":"TodoListResponse"}},"uniqueName":"TodoToggleItem"},"delete":{"type":"route","group":"todo","name":"delete","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"method":"DELETE","path":"todo/:name","tags":[],"params":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"nameParam","uniqueName":"TodoNameParam"}},"response":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"deleteResponse","uniqueName":"TodoDeleteResponse"}},"uniqueName":"TodoDelete"},"item":{"type":"object","group":"todo","name":"item","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"strict":false},"keys":{"completed":{"type":"boolean","docString":"","isOptional":true,"defaultValue":"false","disabled":{"validator":false,"mock":false},"validator":{"convert":false}},"name":{"type":"string","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"convert":false,"trim":false,"lowerCase":false,"upperCase":false}}},"uniqueName":"TodoItem"},"allResponse":{"type":"object","group":"todo","name":"allResponse","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"strict":false},"keys":{"store":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"collection","uniqueName":"TodoCollection"}}},"uniqueName":"TodoAllResponse"},"nameParam":{"type":"object","group":"todo","name":"nameParam","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"strict":false},"keys":{"name":{"type":"string","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"convert":true,"trim":true,"lowerCase":false,"upperCase":false,"min":0,"max":30}}},"uniqueName":"TodoNameParam"},"listResponse":{"type":"object","group":"todo","name":"listResponse","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"strict":false},"keys":{"todo":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"todo","name":"list","uniqueName":"TodoList"}}},"uniqueName":"TodoListResponse"},"newBody":{"type":"object","group":"todo","name":"newBody","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"strict":false},"keys":{"name":{"type":"string","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"convert":false,"trim":true,"lowerCase":false,"upperCase":false,"min":1,"max":40},"mocks":{"rawMock":"\\"Todo \\" + _mocker.integer({ min: 0, max: 1000 })"}}},"uniqueName":"TodoNewBody"},"createItemBody":{"type":"object","group":"todo","name":"createItemBody","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"strict":false},"keys":{"name":{"type":"string","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"convert":false,"trim":true,"lowerCase":false,"upperCase":false,"min":1,"max":365},"mocks":{"rawMock":"_mocker.sentence({ words: 6 })"}}},"uniqueName":"TodoCreateItemBody"},"toggleItemBody":{"type":"object","group":"todo","name":"toggleItemBody","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"strict":false},"keys":{"index":{"type":"number","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"convert":true,"integer":true,"min":0}}},"uniqueName":"TodoToggleItemBody"},"deleteResponse":{"type":"object","group":"todo","name":"deleteResponse","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"strict":false},"keys":{"deleted":{"type":"boolean","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"convert":false}}},"uniqueName":"TodoDeleteResponse"}},"unimplemented":{"getUser":{"type":"route","group":"unimplemented","name":"getUser","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"method":"GET","path":"unimplemented/user","tags":[],"response":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"unimplemented","name":"user","uniqueName":"UnimplementedUser"}},"uniqueName":"UnimplementedGetUser"},"settings":{"type":"route","group":"unimplemented","name":"settings","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"method":"GET","path":"unimplemented/settings","tags":[],"response":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"unimplemented","name":"settingsResponse","uniqueName":"UnimplementedSettingsResponse"}},"uniqueName":"UnimplementedSettings"},"user":{"type":"object","group":"unimplemented","name":"user","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"strict":false},"keys":{"id":{"type":"uuid","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false}},"name":{"type":"string","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"convert":false,"trim":false,"lowerCase":false,"upperCase":false},"mocks":{"rawMock":"_mocker.first() + \\" \\" + _mocker.last()"}},"age":{"type":"number","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"convert":false,"integer":true},"mocks":{"rawMock":"_mocker.age()"}}},"uniqueName":"UnimplementedUser"},"settingsResponse":{"type":"object","group":"unimplemented","name":"settingsResponse","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"strict":false},"keys":{"darkMode":{"type":"boolean","docString":"","isOptional":true,"defaultValue":true,"disabled":{"validator":false,"mock":false},"validator":{"convert":false}},"preferredNumber":{"type":"number","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"convert":true,"integer":true,"min":0,"max":10}},"direction":{"type":"reference","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"reference":{"group":"unimplemented","name":"windDirection","uniqueName":"UnimplementedWindDirection"}},"totalMess":{"type":"array","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"convert":false},"values":{"type":"anyOf","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"values":[{"type":"number","docString":"","isOptional":true,"disabled":{"validator":false,"mock":false},"validator":{"convert":false,"integer":false,"min":1,"max":150}},{"type":"string","docString":"","isOptional":true,"defaultValue":"new Date().toISOString()","disabled":{"validator":false,"mock":false},"validator":{"convert":false,"trim":false,"lowerCase":false,"upperCase":false},"mocks":{"rawMock":"new Date(_mocker.timestamp() * 1000).toISOString()"}},{"type":"array","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"convert":false},"values":{"type":"boolean","docString":"","isOptional":true,"defaultValue":false,"disabled":{"validator":false,"mock":false},"validator":{"convert":true}}},{"type":"object","docString":"","isOptional":false,"disabled":{"validator":false,"mock":false},"validator":{"strict":false},"keys":{"foo":{"type":"boolean","docString":"","isOptional":true,"disabled":{"validator":false,"mock":false},"validator":{"convert":false}}}}]}}},"uniqueName":"UnimplementedSettingsResponse"},"windDirection":{"type":"string","group":"unimplemented","name":"windDirection","docString":"","isOptional":true,"defaultValue":"\\"NORTH\\"","disabled":{"validator":false,"mock":false},"oneOf":["NORTH","EAST","SOUTH","WEST"],"validator":{"convert":false,"trim":false,"lowerCase":false,"upperCase":false},"uniqueName":"UnimplementedWindDirection"}}}';
+  ctx.body = structureString;
   return next();
 };
 
 function routeMatcher0(path, params, currentIdx) {
-  if (!path.startsWith("GET/unimplemented/settings", currentIdx)) {
-    return undefined;
-  }
-  return handlers.UnimplementedSettings;
-}
-function routeMatcher1(path, params, currentIdx) {
   if (!path.startsWith("GET/_lbu/structure.json", currentIdx)) {
     return undefined;
   }
   return handlers.LbuStructure;
 }
 function routeMatcher2(path, params, currentIdx) {
-  if (!path.startsWith("GET/unimplemented/user", currentIdx)) {
-    return undefined;
-  }
-  return handlers.UnimplementedGetUser;
-}
-function routeMatcher4(path, params, currentIdx) {
   let subIdx = path.indexOf("/", currentIdx);
   if (subIdx === -1) {
     subIdx = path.length;
@@ -472,25 +406,25 @@ function routeMatcher4(path, params, currentIdx) {
   params.name = decodeURIComponent(subPath);
   return handlers.TodoDelete;
 }
-function routeMatcher3(path, params, currentIdx) {
+function routeMatcher1(path, params, currentIdx) {
   if (!path.startsWith("DELETE/todo", currentIdx)) {
     return undefined;
   }
   const nextIdx = currentIdx + 1 + 11;
   let handler = undefined;
-  handler = routeMatcher4(path, params, nextIdx);
+  handler = routeMatcher2(path, params, nextIdx);
   if (handler !== undefined) {
     return handler;
   }
   return undefined;
 }
-function routeMatcher8(path, params, currentIdx) {
+function routeMatcher6(path, params, currentIdx) {
   if (!path.startsWith("toggle", currentIdx)) {
     return undefined;
   }
   return handlers.TodoToggleItem;
 }
-function routeMatcher7(path, params, currentIdx) {
+function routeMatcher5(path, params, currentIdx) {
   if (!path.startsWith("item", currentIdx)) {
     return undefined;
   }
@@ -499,13 +433,13 @@ function routeMatcher7(path, params, currentIdx) {
   if (path.length === nextIdx - 1) {
     return handlers.TodoCreateItem;
   }
-  handler = routeMatcher8(path, params, nextIdx);
+  handler = routeMatcher6(path, params, nextIdx);
   if (handler !== undefined) {
     return handler;
   }
   return undefined;
 }
-function routeMatcher6(path, params, currentIdx) {
+function routeMatcher4(path, params, currentIdx) {
   let subIdx = path.indexOf("/", currentIdx);
   if (subIdx === -1) {
     subIdx = path.length;
@@ -513,14 +447,14 @@ function routeMatcher6(path, params, currentIdx) {
   const subPath = path.substring(currentIdx, subIdx);
   const nextIdx = subIdx + 1;
   let handler = undefined;
-  handler = routeMatcher7(path, params, nextIdx);
+  handler = routeMatcher5(path, params, nextIdx);
   if (handler !== undefined) {
     params.name = decodeURIComponent(subPath);
     return handler;
   }
   return undefined;
 }
-function routeMatcher5(path, params, currentIdx) {
+function routeMatcher3(path, params, currentIdx) {
   if (!path.startsWith("POST/todo", currentIdx)) {
     return undefined;
   }
@@ -529,13 +463,13 @@ function routeMatcher5(path, params, currentIdx) {
   if (path.length === nextIdx - 1) {
     return handlers.TodoNew;
   }
-  handler = routeMatcher6(path, params, nextIdx);
+  handler = routeMatcher4(path, params, nextIdx);
   if (handler !== undefined) {
     return handler;
   }
   return undefined;
 }
-function routeMatcher10(path, params, currentIdx) {
+function routeMatcher8(path, params, currentIdx) {
   let subIdx = path.indexOf("/", currentIdx);
   if (subIdx === -1) {
     subIdx = path.length;
@@ -544,7 +478,7 @@ function routeMatcher10(path, params, currentIdx) {
   params.name = decodeURIComponent(subPath);
   return handlers.TodoOne;
 }
-function routeMatcher9(path, params, currentIdx) {
+function routeMatcher7(path, params, currentIdx) {
   if (!path.startsWith("GET/todo", currentIdx)) {
     return undefined;
   }
@@ -553,7 +487,7 @@ function routeMatcher9(path, params, currentIdx) {
   if (path.length === nextIdx - 1) {
     return handlers.TodoAll;
   }
-  handler = routeMatcher10(path, params, nextIdx);
+  handler = routeMatcher8(path, params, nextIdx);
   if (handler !== undefined) {
     return handler;
   }

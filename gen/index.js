@@ -1,5 +1,4 @@
 import { todoModel } from "./todo.js";
-import { unimplementedModel } from "./unimplemented.js";
 
 /**
  * Internal structures
@@ -8,5 +7,4 @@ import { unimplementedModel } from "./unimplemented.js";
  */
 export function extendWithInternal(app) {
   todoModel(app);
-  unimplementedModel(app);
 }

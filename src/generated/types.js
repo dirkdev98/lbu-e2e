@@ -2,15 +2,27 @@
 /* eslint-disable no-unused-vars */
 
 /**
- * @name TodoList
+ * @name LbuStructureResponse
  *
- * @typedef { { name:string, items:(TodoItem)[], }}
+ * @typedef { *}
  */
 
 /**
- * @name TodoList_Input
+ * @name LbuStructureResponse_Input
  *
- * @typedef { { name:string, items:(TodoItem_Input)[], }}
+ * @typedef { LbuStructureResponse}
+ */
+
+/**
+ * @name TodoAllResponse
+ *
+ * @typedef { { "store":TodoCollection, }}
+ */
+
+/**
+ * @name TodoAllResponse_Input
+ *
+ * @typedef { { "store":TodoCollection_Input, }}
  */
 
 /**
@@ -26,69 +38,9 @@
  */
 
 /**
- * @name TodoItem
- *
- * @typedef { { completed:boolean, name:string, }}
- */
-
-/**
- * @name TodoItem_Input
- *
- * @typedef { { completed?:boolean , name:string, }}
- */
-
-/**
- * @name TodoAllResponse
- *
- * @typedef { { store:TodoCollection, }}
- */
-
-/**
- * @name TodoAllResponse_Input
- *
- * @typedef { { store:TodoCollection_Input, }}
- */
-
-/**
- * @name TodoNameParam
- *
- * @typedef { { name:string, }}
- */
-
-/**
- * @name TodoNameParam_Input
- *
- * @typedef { TodoNameParam}
- */
-
-/**
- * @name TodoListResponse
- *
- * @typedef { { todo:TodoList, }}
- */
-
-/**
- * @name TodoListResponse_Input
- *
- * @typedef { { todo:TodoList_Input, }}
- */
-
-/**
- * @name TodoNewBody
- *
- * @typedef { { name:string, }}
- */
-
-/**
- * @name TodoNewBody_Input
- *
- * @typedef { TodoNewBody}
- */
-
-/**
  * @name TodoCreateItemBody
  *
- * @typedef { { name:string, }}
+ * @typedef { { "name":string, }}
  */
 
 /**
@@ -98,21 +50,45 @@
  */
 
 /**
- * @name TodoToggleItemBody
+ * @name TodoCreateItemParams
  *
- * @typedef { { index:number, }}
+ * @typedef { { "name":string, }}
  */
 
 /**
- * @name TodoToggleItemBody_Input
+ * @name TodoCreateItemParams_Input
  *
- * @typedef { TodoToggleItemBody}
+ * @typedef { TodoCreateItemParams}
+ */
+
+/**
+ * @name TodoCreateItemResponse
+ *
+ * @typedef { { "todo":TodoList, }}
+ */
+
+/**
+ * @name TodoCreateItemResponse_Input
+ *
+ * @typedef { { "todo":TodoList_Input, }}
+ */
+
+/**
+ * @name TodoDeleteParams
+ *
+ * @typedef { { "name":string, }}
+ */
+
+/**
+ * @name TodoDeleteParams_Input
+ *
+ * @typedef { TodoDeleteParams}
  */
 
 /**
  * @name TodoDeleteResponse
  *
- * @typedef { { deleted:boolean, }}
+ * @typedef { { "deleted":boolean, }}
  */
 
 /**
@@ -122,37 +98,109 @@
  */
 
 /**
- * @name UnimplementedUser
+ * @name TodoItem
  *
- * @typedef { { id:string, name:string, age:number, }}
+ * @typedef { { "completed":boolean, "name":string, }}
  */
 
 /**
- * @name UnimplementedUser_Input
+ * @name TodoItem_Input
  *
- * @typedef { UnimplementedUser}
+ * @typedef { { "completed"?:boolean , "name":string, }}
  */
 
 /**
- * @name UnimplementedSettingsResponse
+ * @name TodoList
  *
- * @typedef { { darkMode:boolean, preferredNumber:number, direction:UnimplementedWindDirection, totalMess:(( number |undefined|string|(boolean)[]|{ foo?:boolean , } ))[], }}
+ * @typedef { { "name":string, "items":(TodoItem)[], }}
  */
 
 /**
- * @name UnimplementedSettingsResponse_Input
+ * @name TodoList_Input
  *
- * @typedef { { darkMode?:boolean , preferredNumber:number, direction:UnimplementedWindDirection_Input, totalMess:(( number |undefined|string |undefined|("true"|"false"|boolean |undefined)[]|{ foo?:boolean , } ))[], }}
+ * @typedef { { "name":string, "items":(TodoItem_Input)[], }}
  */
 
 /**
- * @name UnimplementedWindDirection
+ * @name TodoNewBody
  *
- * @typedef { "NORTH"|"EAST"|"SOUTH"|"WEST"}
+ * @typedef { { "name":string, }}
  */
 
 /**
- * @name UnimplementedWindDirection_Input
+ * @name TodoNewBody_Input
  *
- * @typedef { "NORTH"|"EAST"|"SOUTH"|"WEST" |undefined}
+ * @typedef { TodoNewBody}
+ */
+
+/**
+ * @name TodoNewResponse
+ *
+ * @typedef { { "todo":TodoList, }}
+ */
+
+/**
+ * @name TodoNewResponse_Input
+ *
+ * @typedef { { "todo":TodoList_Input, }}
+ */
+
+/**
+ * @name TodoOneParams
+ *
+ * @typedef { { "name":string, }}
+ */
+
+/**
+ * @name TodoOneParams_Input
+ *
+ * @typedef { TodoOneParams}
+ */
+
+/**
+ * @name TodoOneResponse
+ *
+ * @typedef { { "todo":TodoList, }}
+ */
+
+/**
+ * @name TodoOneResponse_Input
+ *
+ * @typedef { { "todo":TodoList_Input, }}
+ */
+
+/**
+ * @name TodoToggleItemBody
+ *
+ * @typedef { { "index":number, }}
+ */
+
+/**
+ * @name TodoToggleItemBody_Input
+ *
+ * @typedef { TodoToggleItemBody}
+ */
+
+/**
+ * @name TodoToggleItemParams
+ *
+ * @typedef { { "name":string, }}
+ */
+
+/**
+ * @name TodoToggleItemParams_Input
+ *
+ * @typedef { TodoToggleItemParams}
+ */
+
+/**
+ * @name TodoToggleItemResponse
+ *
+ * @typedef { { "todo":TodoList, }}
+ */
+
+/**
+ * @name TodoToggleItemResponse_Input
+ *
+ * @typedef { { "todo":TodoList_Input, }}
  */

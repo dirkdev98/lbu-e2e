@@ -15,7 +15,7 @@ const isNil = (value) => value === undefined || value === null;
 /**
  * @type ValidationErrorFn
  */
-let _errorFn = (key, info) => {
+let _errorBuildFn = (key, info) => {
   const err = new Error(`ValidationError: ${key}`);
   err.key = key;
   err.info = info;
@@ -26,28 +26,51 @@ let _errorFn = (key, info) => {
  * Set a different error function, for example AppError.validationError
  * @param {ValidationErrorFn} fn
  */
-export function validatorSetErrorFn(fn) {
-  _errorFn = fn;
+export function validatorSetError(fn) {
+  _errorBuildFn = fn;
 }
+
+function buildError(key, info) {
+  throw _errorBuildFn(key, info);
+}
+
+export const lbuValidators = {
+  /**
+   *
+   * @param {*} value
+   * @param {string} [propertyPath]
+   * @returns { LbuStructureResponse}
+   */
+  structureResponse: (value, propertyPath = "$") => {
+    let result = value;
+    if ("preValidateLbuStructureResponse" in validatorHooks) {
+      result = validatorHooks["preValidateLbuStructureResponse"](result);
+    }
+    result = anyValidator0(result, propertyPath);
+    if ("postValidateLbuStructureResponse" in validatorHooks) {
+      return validatorHooks["postValidateLbuStructureResponse"](result);
+    }
+    return result;
+  },
+};
 
 export const todoValidators = {
   /**
    *
    * @param {*} value
    * @param {string} [propertyPath]
-   * @returns { TodoList}
+   * @returns { TodoAllResponse}
    */
-  list: (value, propertyPath = "$") => {
+  allResponse: (value, propertyPath = "$") => {
     let result = value;
-    if ("preValidateTodoList" in validatorHooks) {
-      result = validatorHooks["preValidateTodoList"](result);
+    if ("preValidateTodoAllResponse" in validatorHooks) {
+      result = validatorHooks["preValidateTodoAllResponse"](result);
     }
-    result = objectValidator0(result, propertyPath);
-    if ("postValidateTodoList" in validatorHooks) {
-      return validatorHooks["postValidateTodoList"](result);
-    } else {
-      return result;
+    result = objectValidator1(result, propertyPath);
+    if ("postValidateTodoAllResponse" in validatorHooks) {
+      return validatorHooks["postValidateTodoAllResponse"](result);
     }
+    return result;
   },
 
   /**
@@ -61,107 +84,11 @@ export const todoValidators = {
     if ("preValidateTodoCollection" in validatorHooks) {
       result = validatorHooks["preValidateTodoCollection"](result);
     }
-    result = genericValidator4(result, propertyPath);
+    result = genericValidator3(result, propertyPath);
     if ("postValidateTodoCollection" in validatorHooks) {
       return validatorHooks["postValidateTodoCollection"](result);
-    } else {
-      return result;
     }
-  },
-
-  /**
-   *
-   * @param {*} value
-   * @param {string} [propertyPath]
-   * @returns { TodoItem}
-   */
-  item: (value, propertyPath = "$") => {
-    let result = value;
-    if ("preValidateTodoItem" in validatorHooks) {
-      result = validatorHooks["preValidateTodoItem"](result);
-    }
-    result = objectValidator6(result, propertyPath);
-    if ("postValidateTodoItem" in validatorHooks) {
-      return validatorHooks["postValidateTodoItem"](result);
-    } else {
-      return result;
-    }
-  },
-
-  /**
-   *
-   * @param {*} value
-   * @param {string} [propertyPath]
-   * @returns { TodoAllResponse}
-   */
-  allResponse: (value, propertyPath = "$") => {
-    let result = value;
-    if ("preValidateTodoAllResponse" in validatorHooks) {
-      result = validatorHooks["preValidateTodoAllResponse"](result);
-    }
-    result = objectValidator8(result, propertyPath);
-    if ("postValidateTodoAllResponse" in validatorHooks) {
-      return validatorHooks["postValidateTodoAllResponse"](result);
-    } else {
-      return result;
-    }
-  },
-
-  /**
-   *
-   * @param {*} value
-   * @param {string} [propertyPath]
-   * @returns { TodoNameParam}
-   */
-  nameParam: (value, propertyPath = "$") => {
-    let result = value;
-    if ("preValidateTodoNameParam" in validatorHooks) {
-      result = validatorHooks["preValidateTodoNameParam"](result);
-    }
-    result = objectValidator10(result, propertyPath);
-    if ("postValidateTodoNameParam" in validatorHooks) {
-      return validatorHooks["postValidateTodoNameParam"](result);
-    } else {
-      return result;
-    }
-  },
-
-  /**
-   *
-   * @param {*} value
-   * @param {string} [propertyPath]
-   * @returns { TodoListResponse}
-   */
-  listResponse: (value, propertyPath = "$") => {
-    let result = value;
-    if ("preValidateTodoListResponse" in validatorHooks) {
-      result = validatorHooks["preValidateTodoListResponse"](result);
-    }
-    result = objectValidator12(result, propertyPath);
-    if ("postValidateTodoListResponse" in validatorHooks) {
-      return validatorHooks["postValidateTodoListResponse"](result);
-    } else {
-      return result;
-    }
-  },
-
-  /**
-   *
-   * @param {*} value
-   * @param {string} [propertyPath]
-   * @returns { TodoNewBody}
-   */
-  newBody: (value, propertyPath = "$") => {
-    let result = value;
-    if ("preValidateTodoNewBody" in validatorHooks) {
-      result = validatorHooks["preValidateTodoNewBody"](result);
-    }
-    result = objectValidator13(result, propertyPath);
-    if ("postValidateTodoNewBody" in validatorHooks) {
-      return validatorHooks["postValidateTodoNewBody"](result);
-    } else {
-      return result;
-    }
+    return result;
   },
 
   /**
@@ -175,31 +102,65 @@ export const todoValidators = {
     if ("preValidateTodoCreateItemBody" in validatorHooks) {
       result = validatorHooks["preValidateTodoCreateItemBody"](result);
     }
-    result = objectValidator15(result, propertyPath);
+    result = objectValidator6(result, propertyPath);
     if ("postValidateTodoCreateItemBody" in validatorHooks) {
       return validatorHooks["postValidateTodoCreateItemBody"](result);
-    } else {
-      return result;
     }
+    return result;
   },
 
   /**
    *
    * @param {*} value
    * @param {string} [propertyPath]
-   * @returns { TodoToggleItemBody}
+   * @returns { TodoCreateItemParams}
    */
-  toggleItemBody: (value, propertyPath = "$") => {
+  createItemParams: (value, propertyPath = "$") => {
     let result = value;
-    if ("preValidateTodoToggleItemBody" in validatorHooks) {
-      result = validatorHooks["preValidateTodoToggleItemBody"](result);
+    if ("preValidateTodoCreateItemParams" in validatorHooks) {
+      result = validatorHooks["preValidateTodoCreateItemParams"](result);
     }
-    result = objectValidator17(result, propertyPath);
-    if ("postValidateTodoToggleItemBody" in validatorHooks) {
-      return validatorHooks["postValidateTodoToggleItemBody"](result);
-    } else {
-      return result;
+    result = objectValidator8(result, propertyPath);
+    if ("postValidateTodoCreateItemParams" in validatorHooks) {
+      return validatorHooks["postValidateTodoCreateItemParams"](result);
     }
+    return result;
+  },
+
+  /**
+   *
+   * @param {*} value
+   * @param {string} [propertyPath]
+   * @returns { TodoCreateItemResponse}
+   */
+  createItemResponse: (value, propertyPath = "$") => {
+    let result = value;
+    if ("preValidateTodoCreateItemResponse" in validatorHooks) {
+      result = validatorHooks["preValidateTodoCreateItemResponse"](result);
+    }
+    result = objectValidator10(result, propertyPath);
+    if ("postValidateTodoCreateItemResponse" in validatorHooks) {
+      return validatorHooks["postValidateTodoCreateItemResponse"](result);
+    }
+    return result;
+  },
+
+  /**
+   *
+   * @param {*} value
+   * @param {string} [propertyPath]
+   * @returns { TodoDeleteParams}
+   */
+  deleteParams: (value, propertyPath = "$") => {
+    let result = value;
+    if ("preValidateTodoDeleteParams" in validatorHooks) {
+      result = validatorHooks["preValidateTodoDeleteParams"](result);
+    }
+    result = objectValidator11(result, propertyPath);
+    if ("postValidateTodoDeleteParams" in validatorHooks) {
+      return validatorHooks["postValidateTodoDeleteParams"](result);
+    }
+    return result;
   },
 
   /**
@@ -213,643 +174,1126 @@ export const todoValidators = {
     if ("preValidateTodoDeleteResponse" in validatorHooks) {
       result = validatorHooks["preValidateTodoDeleteResponse"](result);
     }
-    result = objectValidator19(result, propertyPath);
+    result = objectValidator12(result, propertyPath);
     if ("postValidateTodoDeleteResponse" in validatorHooks) {
       return validatorHooks["postValidateTodoDeleteResponse"](result);
-    } else {
-      return result;
     }
-  },
-};
-
-export const unimplementedValidators = {
-  /**
-   *
-   * @param {*} value
-   * @param {string} [propertyPath]
-   * @returns { UnimplementedUser}
-   */
-  user: (value, propertyPath = "$") => {
-    let result = value;
-    if ("preValidateUnimplementedUser" in validatorHooks) {
-      result = validatorHooks["preValidateUnimplementedUser"](result);
-    }
-    result = objectValidator21(result, propertyPath);
-    if ("postValidateUnimplementedUser" in validatorHooks) {
-      return validatorHooks["postValidateUnimplementedUser"](result);
-    } else {
-      return result;
-    }
+    return result;
   },
 
   /**
    *
    * @param {*} value
    * @param {string} [propertyPath]
-   * @returns { UnimplementedSettingsResponse}
+   * @returns { TodoItem}
    */
-  settingsResponse: (value, propertyPath = "$") => {
+  item: (value, propertyPath = "$") => {
     let result = value;
-    if ("preValidateUnimplementedSettingsResponse" in validatorHooks) {
-      result = validatorHooks["preValidateUnimplementedSettingsResponse"](
-        result,
-      );
+    if ("preValidateTodoItem" in validatorHooks) {
+      result = validatorHooks["preValidateTodoItem"](result);
+    }
+    result = objectValidator14(result, propertyPath);
+    if ("postValidateTodoItem" in validatorHooks) {
+      return validatorHooks["postValidateTodoItem"](result);
+    }
+    return result;
+  },
+
+  /**
+   *
+   * @param {*} value
+   * @param {string} [propertyPath]
+   * @returns { TodoList}
+   */
+  list: (value, propertyPath = "$") => {
+    let result = value;
+    if ("preValidateTodoList" in validatorHooks) {
+      result = validatorHooks["preValidateTodoList"](result);
+    }
+    result = objectValidator16(result, propertyPath);
+    if ("postValidateTodoList" in validatorHooks) {
+      return validatorHooks["postValidateTodoList"](result);
+    }
+    return result;
+  },
+
+  /**
+   *
+   * @param {*} value
+   * @param {string} [propertyPath]
+   * @returns { TodoNewBody}
+   */
+  newBody: (value, propertyPath = "$") => {
+    let result = value;
+    if ("preValidateTodoNewBody" in validatorHooks) {
+      result = validatorHooks["preValidateTodoNewBody"](result);
+    }
+    result = objectValidator19(result, propertyPath);
+    if ("postValidateTodoNewBody" in validatorHooks) {
+      return validatorHooks["postValidateTodoNewBody"](result);
+    }
+    return result;
+  },
+
+  /**
+   *
+   * @param {*} value
+   * @param {string} [propertyPath]
+   * @returns { TodoNewResponse}
+   */
+  newResponse: (value, propertyPath = "$") => {
+    let result = value;
+    if ("preValidateTodoNewResponse" in validatorHooks) {
+      result = validatorHooks["preValidateTodoNewResponse"](result);
+    }
+    result = objectValidator20(result, propertyPath);
+    if ("postValidateTodoNewResponse" in validatorHooks) {
+      return validatorHooks["postValidateTodoNewResponse"](result);
+    }
+    return result;
+  },
+
+  /**
+   *
+   * @param {*} value
+   * @param {string} [propertyPath]
+   * @returns { TodoOneParams}
+   */
+  oneParams: (value, propertyPath = "$") => {
+    let result = value;
+    if ("preValidateTodoOneParams" in validatorHooks) {
+      result = validatorHooks["preValidateTodoOneParams"](result);
+    }
+    result = objectValidator22(result, propertyPath);
+    if ("postValidateTodoOneParams" in validatorHooks) {
+      return validatorHooks["postValidateTodoOneParams"](result);
+    }
+    return result;
+  },
+
+  /**
+   *
+   * @param {*} value
+   * @param {string} [propertyPath]
+   * @returns { TodoOneResponse}
+   */
+  oneResponse: (value, propertyPath = "$") => {
+    let result = value;
+    if ("preValidateTodoOneResponse" in validatorHooks) {
+      result = validatorHooks["preValidateTodoOneResponse"](result);
+    }
+    result = objectValidator23(result, propertyPath);
+    if ("postValidateTodoOneResponse" in validatorHooks) {
+      return validatorHooks["postValidateTodoOneResponse"](result);
+    }
+    return result;
+  },
+
+  /**
+   *
+   * @param {*} value
+   * @param {string} [propertyPath]
+   * @returns { TodoToggleItemBody}
+   */
+  toggleItemBody: (value, propertyPath = "$") => {
+    let result = value;
+    if ("preValidateTodoToggleItemBody" in validatorHooks) {
+      result = validatorHooks["preValidateTodoToggleItemBody"](result);
+    }
+    result = objectValidator24(result, propertyPath);
+    if ("postValidateTodoToggleItemBody" in validatorHooks) {
+      return validatorHooks["postValidateTodoToggleItemBody"](result);
+    }
+    return result;
+  },
+
+  /**
+   *
+   * @param {*} value
+   * @param {string} [propertyPath]
+   * @returns { TodoToggleItemParams}
+   */
+  toggleItemParams: (value, propertyPath = "$") => {
+    let result = value;
+    if ("preValidateTodoToggleItemParams" in validatorHooks) {
+      result = validatorHooks["preValidateTodoToggleItemParams"](result);
     }
     result = objectValidator26(result, propertyPath);
-    if ("postValidateUnimplementedSettingsResponse" in validatorHooks) {
-      return validatorHooks["postValidateUnimplementedSettingsResponse"](
-        result,
-      );
-    } else {
-      return result;
+    if ("postValidateTodoToggleItemParams" in validatorHooks) {
+      return validatorHooks["postValidateTodoToggleItemParams"](result);
     }
+    return result;
   },
 
   /**
    *
    * @param {*} value
    * @param {string} [propertyPath]
-   * @returns { UnimplementedWindDirection}
+   * @returns { TodoToggleItemResponse}
    */
-  windDirection: (value, propertyPath = "$") => {
+  toggleItemResponse: (value, propertyPath = "$") => {
     let result = value;
-    if ("preValidateUnimplementedWindDirection" in validatorHooks) {
-      result = validatorHooks["preValidateUnimplementedWindDirection"](result);
+    if ("preValidateTodoToggleItemResponse" in validatorHooks) {
+      result = validatorHooks["preValidateTodoToggleItemResponse"](result);
     }
-    result = stringValidator38(result, propertyPath);
-    if ("postValidateUnimplementedWindDirection" in validatorHooks) {
-      return validatorHooks["postValidateUnimplementedWindDirection"](result);
-    } else {
-      return result;
+    result = objectValidator27(result, propertyPath);
+    if ("postValidateTodoToggleItemResponse" in validatorHooks) {
+      return validatorHooks["postValidateTodoToggleItemResponse"](result);
     }
+    return result;
   },
 };
 
-export const lbuValidators = {};
-
-function stringValidator1(value, propertyPath, parentType = "string") {
+function anyValidator0(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "any",
+) {
   if (isNil(value)) {
-    throw _errorFn("validator.string.undefined", { propertyPath });
-  }
-  if (typeof value !== "string") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
+    return buildError("validator.any.undefined", { propertyPath }, errorList);
   }
   return value;
 }
-function referenceValidator3(value, propertyPath, parentType = "reference") {
+function referenceValidator2(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "reference",
+) {
   if (isNil(value)) {
-    throw _errorFn("validator.reference.undefined", { propertyPath });
-  }
-  return todoValidators.item(value, propertyPath);
-}
-function arrayValidator2(value, propertyPath, parentType = "array") {
-  if (isNil(value)) {
-    throw _errorFn("validator.array.undefined", { propertyPath });
-  }
-  if (!Array.isArray(value)) {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  const result = [];
-  for (let i = 0; i < value.length; ++i) {
-    result.push(referenceValidator3(value[i], propertyPath + "[" + i + "]"));
-  }
-  return result;
-}
-function objectValidator0(value, propertyPath, parentType = "object") {
-  if (isNil(value)) {
-    throw _errorFn("validator.object.undefined", { propertyPath });
-  }
-  if (typeof value !== "object") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  const result = Object.create(null);
-  result["name"] = stringValidator1(value["name"], propertyPath + "." + "name");
-  result["items"] = arrayValidator2(
-    value["items"],
-    propertyPath + "." + "items",
-  );
-  return result;
-}
-function referenceValidator5(value, propertyPath, parentType = "reference") {
-  if (isNil(value)) {
-    throw _errorFn("validator.reference.undefined", { propertyPath });
-  }
-  return todoValidators.list(value, propertyPath);
-}
-function genericValidator4(value, propertyPath, parentType = "generic") {
-  if (isNil(value)) {
-    throw _errorFn("validator.generic.undefined", { propertyPath });
-  }
-  if (typeof value !== "object") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  const result = Object.create(null);
-  for (const key of Object.keys(value)) {
-    const validatedKey = stringValidator1(key, propertyPath + `.$key[${key}]`);
-    const validatedValue = referenceValidator5(
-      value[key],
-      propertyPath + `.$value[${key}]`,
+    return buildError(
+      "validator.reference.undefined",
+      { propertyPath },
+      errorList,
     );
-    result[validatedKey] = validatedValue;
-  }
-  return result;
-}
-function booleanValidator7(value, propertyPath, parentType = "boolean") {
-  if (isNil(value)) {
-    return false;
-  }
-  if (typeof value !== "boolean") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  return value;
-}
-function objectValidator6(value, propertyPath, parentType = "object") {
-  if (isNil(value)) {
-    throw _errorFn("validator.object.undefined", { propertyPath });
-  }
-  if (typeof value !== "object") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  const result = Object.create(null);
-  result["completed"] = booleanValidator7(
-    value["completed"],
-    propertyPath + "." + "completed",
-  );
-  result["name"] = stringValidator1(value["name"], propertyPath + "." + "name");
-  return result;
-}
-function referenceValidator9(value, propertyPath, parentType = "reference") {
-  if (isNil(value)) {
-    throw _errorFn("validator.reference.undefined", { propertyPath });
   }
   return todoValidators.collection(value, propertyPath);
 }
-function objectValidator8(value, propertyPath, parentType = "object") {
+function objectValidator1(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "object",
+) {
   if (isNil(value)) {
-    throw _errorFn("validator.object.undefined", { propertyPath });
+    return buildError(
+      "validator.object.undefined",
+      { propertyPath },
+      errorList,
+    );
   }
   if (typeof value !== "object") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
   }
   const result = Object.create(null);
-  result["store"] = referenceValidator9(
+  const keySet = new Set(Object.keys(value));
+  result["store"] = referenceValidator2(
     value["store"],
-    propertyPath + "." + "store",
+    `${propertyPath}.` + `store`,
+    errorList,
   );
+  keySet.delete("store");
+  if (keySet.size !== 0) {
+    let extraKeys = "";
+    for (const k of keySet.keys()) {
+      extraKeys += `${k},`;
+    }
+    return buildError(
+      `validator.${parentType}.strict`,
+      { propertyPath, extraKeys },
+      errorList,
+    );
+  }
   return result;
 }
-function stringValidator11(value, propertyPath, parentType = "string") {
+function stringValidator4(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "string",
+) {
   if (isNil(value)) {
-    throw _errorFn("validator.string.undefined", { propertyPath });
+    return buildError(
+      "validator.string.undefined",
+      { propertyPath },
+      errorList,
+    );
   }
   if (typeof value !== "string") {
-    value = String(value);
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
   }
-  if (typeof value !== "string") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  value = value.trim();
-  if (value.length < 0) {
-    const min = 0;
-    throw _errorFn(`validator.${parentType}.min`, { propertyPath, min });
-  }
-  if (value.length > 30) {
-    const max = 30;
-    throw _errorFn(`validator.${parentType}.max`, { propertyPath, max });
+  if (value.length < 1) {
+    const min = 1;
+    return buildError(
+      `validator.${parentType}.min`,
+      { propertyPath, min },
+      errorList,
+    );
   }
   return value;
 }
-function objectValidator10(value, propertyPath, parentType = "object") {
+function referenceValidator5(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "reference",
+) {
   if (isNil(value)) {
-    throw _errorFn("validator.object.undefined", { propertyPath });
+    return buildError(
+      "validator.reference.undefined",
+      { propertyPath },
+      errorList,
+    );
+  }
+  return todoValidators.list(value, propertyPath);
+}
+function genericValidator3(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "generic",
+) {
+  if (isNil(value)) {
+    return buildError(
+      "validator.generic.undefined",
+      { propertyPath },
+      errorList,
+    );
   }
   if (typeof value !== "object") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
   }
   const result = Object.create(null);
-  result["name"] = stringValidator11(
-    value["name"],
-    propertyPath + "." + "name",
-  );
+  for (const key of Object.keys(value)) {
+    const validatedKey = stringValidator4(
+      key,
+      `${propertyPath}.$key[${key}]`,
+      errorList,
+    );
+    result[validatedKey] = referenceValidator5(
+      value[key],
+      `${propertyPath}.$value[${key}]`,
+      errorList,
+    );
+  }
   return result;
 }
-function objectValidator12(value, propertyPath, parentType = "object") {
+function stringValidator7(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "string",
+) {
   if (isNil(value)) {
-    throw _errorFn("validator.object.undefined", { propertyPath });
-  }
-  if (typeof value !== "object") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  const result = Object.create(null);
-  result["todo"] = referenceValidator5(
-    value["todo"],
-    propertyPath + "." + "todo",
-  );
-  return result;
-}
-function stringValidator14(value, propertyPath, parentType = "string") {
-  if (isNil(value)) {
-    throw _errorFn("validator.string.undefined", { propertyPath });
+    return buildError(
+      "validator.string.undefined",
+      { propertyPath },
+      errorList,
+    );
   }
   if (typeof value !== "string") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
   }
   value = value.trim();
   if (value.length < 1) {
     const min = 1;
-    throw _errorFn(`validator.${parentType}.min`, { propertyPath, min });
-  }
-  if (value.length > 40) {
-    const max = 40;
-    throw _errorFn(`validator.${parentType}.max`, { propertyPath, max });
-  }
-  return value;
-}
-function objectValidator13(value, propertyPath, parentType = "object") {
-  if (isNil(value)) {
-    throw _errorFn("validator.object.undefined", { propertyPath });
-  }
-  if (typeof value !== "object") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  const result = Object.create(null);
-  result["name"] = stringValidator14(
-    value["name"],
-    propertyPath + "." + "name",
-  );
-  return result;
-}
-function stringValidator16(value, propertyPath, parentType = "string") {
-  if (isNil(value)) {
-    throw _errorFn("validator.string.undefined", { propertyPath });
-  }
-  if (typeof value !== "string") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  value = value.trim();
-  if (value.length < 1) {
-    const min = 1;
-    throw _errorFn(`validator.${parentType}.min`, { propertyPath, min });
+    return buildError(
+      `validator.${parentType}.min`,
+      { propertyPath, min },
+      errorList,
+    );
   }
   if (value.length > 365) {
     const max = 365;
-    throw _errorFn(`validator.${parentType}.max`, { propertyPath, max });
+    return buildError(
+      `validator.${parentType}.max`,
+      { propertyPath, max },
+      errorList,
+    );
   }
   return value;
 }
-function objectValidator15(value, propertyPath, parentType = "object") {
+function objectValidator6(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "object",
+) {
   if (isNil(value)) {
-    throw _errorFn("validator.object.undefined", { propertyPath });
+    return buildError(
+      "validator.object.undefined",
+      { propertyPath },
+      errorList,
+    );
   }
   if (typeof value !== "object") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
   }
   const result = Object.create(null);
-  result["name"] = stringValidator16(
+  const keySet = new Set(Object.keys(value));
+  result["name"] = stringValidator7(
     value["name"],
-    propertyPath + "." + "name",
+    `${propertyPath}.` + `name`,
+    errorList,
   );
+  keySet.delete("name");
+  if (keySet.size !== 0) {
+    let extraKeys = "";
+    for (const k of keySet.keys()) {
+      extraKeys += `${k},`;
+    }
+    return buildError(
+      `validator.${parentType}.strict`,
+      { propertyPath, extraKeys },
+      errorList,
+    );
+  }
   return result;
 }
-function numberValidator18(value, propertyPath, parentType = "number") {
+function stringValidator9(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "string",
+) {
   if (isNil(value)) {
-    throw _errorFn("validator.number.undefined", { propertyPath });
-  }
-  if (typeof value !== "number") {
-    value = Number(value);
-  }
-  if (typeof value !== "number" || isNaN(value) || !isFinite(value)) {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  if (!Number.isInteger(value)) {
-    throw _errorFn(`validator.${parentType}.integer`, { propertyPath });
-  }
-  if (value < 0) {
-    const min = 0;
-    throw _errorFn(`validator.${parentType}.min`, { propertyPath, min });
-  }
-  return value;
-}
-function objectValidator17(value, propertyPath, parentType = "object") {
-  if (isNil(value)) {
-    throw _errorFn("validator.object.undefined", { propertyPath });
-  }
-  if (typeof value !== "object") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  const result = Object.create(null);
-  result["index"] = numberValidator18(
-    value["index"],
-    propertyPath + "." + "index",
-  );
-  return result;
-}
-function booleanValidator20(value, propertyPath, parentType = "boolean") {
-  if (isNil(value)) {
-    throw _errorFn("validator.boolean.undefined", { propertyPath });
-  }
-  if (typeof value !== "boolean") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  return value;
-}
-function objectValidator19(value, propertyPath, parentType = "object") {
-  if (isNil(value)) {
-    throw _errorFn("validator.object.undefined", { propertyPath });
-  }
-  if (typeof value !== "object") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  const result = Object.create(null);
-  result["deleted"] = booleanValidator20(
-    value["deleted"],
-    propertyPath + "." + "deleted",
-  );
-  return result;
-}
-function stringValidator23(value, propertyPath, parentType = "string") {
-  if (isNil(value)) {
-    throw _errorFn("validator.string.undefined", { propertyPath });
+    return buildError(
+      "validator.string.undefined",
+      { propertyPath },
+      errorList,
+    );
   }
   if (typeof value !== "string") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
   }
   value = value.trim();
-  if (value.length < 36) {
-    const min = 36;
-    throw _errorFn(`validator.${parentType}.min`, { propertyPath, min });
+  if (value.length < 1) {
+    const min = 1;
+    return buildError(
+      `validator.${parentType}.min`,
+      { propertyPath, min },
+      errorList,
+    );
   }
-  if (value.length > 36) {
-    const max = 36;
-    throw _errorFn(`validator.${parentType}.max`, { propertyPath, max });
-  }
-  value = value.toLowerCase();
-  if (
-    !/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[a-f0-9]{4}-[a-f0-9]{12}$/gi.test(
-      value,
-    )
-  ) {
-    throw _errorFn(`validator.${parentType}.pattern`, { propertyPath });
-  }
-  return value;
-}
-function uuidValidator22(value, propertyPath, parentType = "uuid") {
-  if (isNil(value)) {
-    throw _errorFn("validator.uuid.undefined", { propertyPath });
-  }
-  return stringValidator23(value, propertyPath, parentType);
-}
-function stringValidator24(value, propertyPath, parentType = "string") {
-  if (isNil(value)) {
-    throw _errorFn("validator.string.undefined", { propertyPath });
-  }
-  if (typeof value !== "string") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
+  if (value.length > 30) {
+    const max = 30;
+    return buildError(
+      `validator.${parentType}.max`,
+      { propertyPath, max },
+      errorList,
+    );
   }
   return value;
 }
-function numberValidator25(value, propertyPath, parentType = "number") {
+function objectValidator8(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "object",
+) {
   if (isNil(value)) {
-    throw _errorFn("validator.number.undefined", { propertyPath });
-  }
-  if (typeof value !== "number" || isNaN(value) || !isFinite(value)) {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  if (!Number.isInteger(value)) {
-    throw _errorFn(`validator.${parentType}.integer`, { propertyPath });
-  }
-  return value;
-}
-function objectValidator21(value, propertyPath, parentType = "object") {
-  if (isNil(value)) {
-    throw _errorFn("validator.object.undefined", { propertyPath });
+    return buildError(
+      "validator.object.undefined",
+      { propertyPath },
+      errorList,
+    );
   }
   if (typeof value !== "object") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
   }
   const result = Object.create(null);
-  result["id"] = uuidValidator22(value["id"], propertyPath + "." + "id");
-  result["name"] = stringValidator24(
+  const keySet = new Set(Object.keys(value));
+  result["name"] = stringValidator9(
     value["name"],
-    propertyPath + "." + "name",
+    `${propertyPath}.` + `name`,
+    errorList,
   );
-  result["age"] = numberValidator25(value["age"], propertyPath + "." + "age");
+  keySet.delete("name");
+  if (keySet.size !== 0) {
+    let extraKeys = "";
+    for (const k of keySet.keys()) {
+      extraKeys += `${k},`;
+    }
+    return buildError(
+      `validator.${parentType}.strict`,
+      { propertyPath, extraKeys },
+      errorList,
+    );
+  }
   return result;
 }
-function booleanValidator27(value, propertyPath, parentType = "boolean") {
+function objectValidator10(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "object",
+) {
   if (isNil(value)) {
-    return true;
+    return buildError(
+      "validator.object.undefined",
+      { propertyPath },
+      errorList,
+    );
+  }
+  if (typeof value !== "object") {
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
+  }
+  const result = Object.create(null);
+  const keySet = new Set(Object.keys(value));
+  result["todo"] = referenceValidator5(
+    value["todo"],
+    `${propertyPath}.` + `todo`,
+    errorList,
+  );
+  keySet.delete("todo");
+  if (keySet.size !== 0) {
+    let extraKeys = "";
+    for (const k of keySet.keys()) {
+      extraKeys += `${k},`;
+    }
+    return buildError(
+      `validator.${parentType}.strict`,
+      { propertyPath, extraKeys },
+      errorList,
+    );
+  }
+  return result;
+}
+function objectValidator11(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "object",
+) {
+  if (isNil(value)) {
+    return buildError(
+      "validator.object.undefined",
+      { propertyPath },
+      errorList,
+    );
+  }
+  if (typeof value !== "object") {
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
+  }
+  const result = Object.create(null);
+  const keySet = new Set(Object.keys(value));
+  result["name"] = stringValidator9(
+    value["name"],
+    `${propertyPath}.` + `name`,
+    errorList,
+  );
+  keySet.delete("name");
+  if (keySet.size !== 0) {
+    let extraKeys = "";
+    for (const k of keySet.keys()) {
+      extraKeys += `${k},`;
+    }
+    return buildError(
+      `validator.${parentType}.strict`,
+      { propertyPath, extraKeys },
+      errorList,
+    );
+  }
+  return result;
+}
+function booleanValidator13(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "boolean",
+) {
+  if (isNil(value)) {
+    return buildError(
+      "validator.boolean.undefined",
+      { propertyPath },
+      errorList,
+    );
   }
   if (typeof value !== "boolean") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
+  }
+  if (value !== true) {
+    const oneOf = true;
+    return buildError(
+      `validator.${parentType}.oneOf`,
+      { propertyPath, oneOf },
+      errorList,
+    );
   }
   return value;
 }
-function numberValidator28(value, propertyPath, parentType = "number") {
+function objectValidator12(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "object",
+) {
   if (isNil(value)) {
-    throw _errorFn("validator.number.undefined", { propertyPath });
+    return buildError(
+      "validator.object.undefined",
+      { propertyPath },
+      errorList,
+    );
   }
-  if (typeof value !== "number") {
-    value = Number(value);
+  if (typeof value !== "object") {
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
   }
-  if (typeof value !== "number" || isNaN(value) || !isFinite(value)) {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
+  const result = Object.create(null);
+  const keySet = new Set(Object.keys(value));
+  result["deleted"] = booleanValidator13(
+    value["deleted"],
+    `${propertyPath}.` + `deleted`,
+    errorList,
+  );
+  keySet.delete("deleted");
+  if (keySet.size !== 0) {
+    let extraKeys = "";
+    for (const k of keySet.keys()) {
+      extraKeys += `${k},`;
+    }
+    return buildError(
+      `validator.${parentType}.strict`,
+      { propertyPath, extraKeys },
+      errorList,
+    );
   }
-  if (!Number.isInteger(value)) {
-    throw _errorFn(`validator.${parentType}.integer`, { propertyPath });
-  }
-  if (value < 0) {
-    const min = 0;
-    throw _errorFn(`validator.${parentType}.min`, { propertyPath, min });
-  }
-  if (value > 10) {
-    const max = 10;
-    throw _errorFn(`validator.${parentType}.max`, { propertyPath, max });
-  }
-  return value;
+  return result;
 }
-function referenceValidator29(value, propertyPath, parentType = "reference") {
-  if (isNil(value)) {
-    throw _errorFn("validator.reference.undefined", { propertyPath });
-  }
-  return unimplementedValidators.windDirection(value, propertyPath);
-}
-function numberValidator32(value, propertyPath, parentType = "number") {
-  if (isNil(value)) {
-    return;
-  }
-  if (typeof value !== "number" || isNaN(value) || !isFinite(value)) {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  if (value < 1) {
-    const min = 1;
-    throw _errorFn(`validator.${parentType}.min`, { propertyPath, min });
-  }
-  if (value > 150) {
-    const max = 150;
-    throw _errorFn(`validator.${parentType}.max`, { propertyPath, max });
-  }
-  return value;
-}
-function stringValidator33(value, propertyPath, parentType = "string") {
-  if (isNil(value)) {
-    return new Date().toISOString();
-  }
-  if (typeof value !== "string") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  return value;
-}
-function booleanValidator35(value, propertyPath, parentType = "boolean") {
+function booleanValidator15(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "boolean",
+) {
   if (isNil(value)) {
     return false;
   }
   if (typeof value !== "boolean") {
-    if (value === "true" || value === 1) {
-      value = true;
-    } else if (value === "false" || value === 0) {
-      value = false;
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
+  }
+  return value;
+}
+function objectValidator14(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "object",
+) {
+  if (isNil(value)) {
+    return buildError(
+      "validator.object.undefined",
+      { propertyPath },
+      errorList,
+    );
+  }
+  if (typeof value !== "object") {
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
+  }
+  const result = Object.create(null);
+  const keySet = new Set(Object.keys(value));
+  result["completed"] = booleanValidator15(
+    value["completed"],
+    `${propertyPath}.` + `completed`,
+    errorList,
+  );
+  keySet.delete("completed");
+  result["name"] = stringValidator4(
+    value["name"],
+    `${propertyPath}.` + `name`,
+    errorList,
+  );
+  keySet.delete("name");
+  if (keySet.size !== 0) {
+    let extraKeys = "";
+    for (const k of keySet.keys()) {
+      extraKeys += `${k},`;
     }
+    return buildError(
+      `validator.${parentType}.strict`,
+      { propertyPath, extraKeys },
+      errorList,
+    );
   }
-  if (typeof value !== "boolean") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  return value;
+  return result;
 }
-function arrayValidator34(value, propertyPath, parentType = "array") {
+function referenceValidator18(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "reference",
+) {
   if (isNil(value)) {
-    throw _errorFn("validator.array.undefined", { propertyPath });
+    return buildError(
+      "validator.reference.undefined",
+      { propertyPath },
+      errorList,
+    );
+  }
+  return todoValidators.item(value, propertyPath);
+}
+function arrayValidator17(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "array",
+) {
+  if (isNil(value)) {
+    return buildError("validator.array.undefined", { propertyPath }, errorList);
   }
   if (!Array.isArray(value)) {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
   }
   const result = [];
   for (let i = 0; i < value.length; ++i) {
-    result.push(booleanValidator35(value[i], propertyPath + "[" + i + "]"));
+    result.push(
+      referenceValidator18(value[i], `${propertyPath}[${i}]`, errorList),
+    );
   }
   return result;
 }
-function booleanValidator37(value, propertyPath, parentType = "boolean") {
+function objectValidator16(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "object",
+) {
   if (isNil(value)) {
-    return;
+    return buildError(
+      "validator.object.undefined",
+      { propertyPath },
+      errorList,
+    );
   }
-  if (typeof value !== "boolean") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
+  if (typeof value !== "object") {
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
+  }
+  const result = Object.create(null);
+  const keySet = new Set(Object.keys(value));
+  result["name"] = stringValidator4(
+    value["name"],
+    `${propertyPath}.` + `name`,
+    errorList,
+  );
+  keySet.delete("name");
+  result["items"] = arrayValidator17(
+    value["items"],
+    `${propertyPath}.` + `items`,
+    errorList,
+  );
+  keySet.delete("items");
+  if (keySet.size !== 0) {
+    let extraKeys = "";
+    for (const k of keySet.keys()) {
+      extraKeys += `${k},`;
+    }
+    return buildError(
+      `validator.${parentType}.strict`,
+      { propertyPath, extraKeys },
+      errorList,
+    );
+  }
+  return result;
+}
+function objectValidator19(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "object",
+) {
+  if (isNil(value)) {
+    return buildError(
+      "validator.object.undefined",
+      { propertyPath },
+      errorList,
+    );
+  }
+  if (typeof value !== "object") {
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
+  }
+  const result = Object.create(null);
+  const keySet = new Set(Object.keys(value));
+  result["name"] = stringValidator9(
+    value["name"],
+    `${propertyPath}.` + `name`,
+    errorList,
+  );
+  keySet.delete("name");
+  if (keySet.size !== 0) {
+    let extraKeys = "";
+    for (const k of keySet.keys()) {
+      extraKeys += `${k},`;
+    }
+    return buildError(
+      `validator.${parentType}.strict`,
+      { propertyPath, extraKeys },
+      errorList,
+    );
+  }
+  return result;
+}
+function referenceValidator21(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "reference",
+) {
+  if (isNil(value)) {
+    return buildError(
+      "validator.reference.undefined",
+      { propertyPath },
+      errorList,
+    );
+  }
+  return todoValidators.list(value, propertyPath);
+}
+function objectValidator20(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "object",
+) {
+  if (isNil(value)) {
+    return buildError(
+      "validator.object.undefined",
+      { propertyPath },
+      errorList,
+    );
+  }
+  if (typeof value !== "object") {
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
+  }
+  const result = Object.create(null);
+  const keySet = new Set(Object.keys(value));
+  result["todo"] = referenceValidator21(
+    value["todo"],
+    `${propertyPath}.` + `todo`,
+    errorList,
+  );
+  keySet.delete("todo");
+  if (keySet.size !== 0) {
+    let extraKeys = "";
+    for (const k of keySet.keys()) {
+      extraKeys += `${k},`;
+    }
+    return buildError(
+      `validator.${parentType}.strict`,
+      { propertyPath, extraKeys },
+      errorList,
+    );
+  }
+  return result;
+}
+function objectValidator22(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "object",
+) {
+  if (isNil(value)) {
+    return buildError(
+      "validator.object.undefined",
+      { propertyPath },
+      errorList,
+    );
+  }
+  if (typeof value !== "object") {
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
+  }
+  const result = Object.create(null);
+  const keySet = new Set(Object.keys(value));
+  result["name"] = stringValidator9(
+    value["name"],
+    `${propertyPath}.` + `name`,
+    errorList,
+  );
+  keySet.delete("name");
+  if (keySet.size !== 0) {
+    let extraKeys = "";
+    for (const k of keySet.keys()) {
+      extraKeys += `${k},`;
+    }
+    return buildError(
+      `validator.${parentType}.strict`,
+      { propertyPath, extraKeys },
+      errorList,
+    );
+  }
+  return result;
+}
+function objectValidator23(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "object",
+) {
+  if (isNil(value)) {
+    return buildError(
+      "validator.object.undefined",
+      { propertyPath },
+      errorList,
+    );
+  }
+  if (typeof value !== "object") {
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
+  }
+  const result = Object.create(null);
+  const keySet = new Set(Object.keys(value));
+  result["todo"] = referenceValidator21(
+    value["todo"],
+    `${propertyPath}.` + `todo`,
+    errorList,
+  );
+  keySet.delete("todo");
+  if (keySet.size !== 0) {
+    let extraKeys = "";
+    for (const k of keySet.keys()) {
+      extraKeys += `${k},`;
+    }
+    return buildError(
+      `validator.${parentType}.strict`,
+      { propertyPath, extraKeys },
+      errorList,
+    );
+  }
+  return result;
+}
+function numberValidator25(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "number",
+) {
+  if (isNil(value)) {
+    return buildError(
+      "validator.number.undefined",
+      { propertyPath },
+      errorList,
+    );
+  }
+  if (typeof value !== "number") {
+    value = Number(value);
+  }
+  if (typeof value !== "number" || isNaN(value) || !isFinite(value)) {
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
+  }
+  if (!Number.isInteger(value)) {
+    return buildError(
+      `validator.${parentType}.integer`,
+      { propertyPath },
+      errorList,
+    );
+  }
+  if (value < 0) {
+    const min = 0;
+    return buildError(
+      `validator.${parentType}.min`,
+      { propertyPath, min },
+      errorList,
+    );
   }
   return value;
 }
-function objectValidator36(value, propertyPath, parentType = "object") {
+function objectValidator24(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "object",
+) {
   if (isNil(value)) {
-    throw _errorFn("validator.object.undefined", { propertyPath });
+    return buildError(
+      "validator.object.undefined",
+      { propertyPath },
+      errorList,
+    );
   }
   if (typeof value !== "object") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
   }
   const result = Object.create(null);
-  result["foo"] = booleanValidator37(value["foo"], propertyPath + "." + "foo");
-  return result;
-}
-function anyOfValidator31(value, propertyPath, parentType = "anyOf") {
-  if (isNil(value)) {
-    throw _errorFn("validator.anyOf.undefined", { propertyPath });
-  }
-  const errors = [];
-  try {
-    return numberValidator32(value, propertyPath);
-  } catch (e) {
-    errors.push({
-      name: e.name,
-      message: e.message,
-      key: e.key,
-      info: e.info,
-    });
-  }
-  try {
-    return stringValidator33(value, propertyPath);
-  } catch (e) {
-    errors.push({
-      name: e.name,
-      message: e.message,
-      key: e.key,
-      info: e.info,
-    });
-  }
-  try {
-    return arrayValidator34(value, propertyPath);
-  } catch (e) {
-    errors.push({
-      name: e.name,
-      message: e.message,
-      key: e.key,
-      info: e.info,
-    });
-  }
-  try {
-    return objectValidator36(value, propertyPath);
-  } catch (e) {
-    errors.push({
-      name: e.name,
-      message: e.message,
-      key: e.key,
-      info: e.info,
-    });
-  }
-  throw _errorFn(`validator.${parentType}.type`, { propertyPath, errors });
-}
-function arrayValidator30(value, propertyPath, parentType = "array") {
-  if (isNil(value)) {
-    throw _errorFn("validator.array.undefined", { propertyPath });
-  }
-  if (!Array.isArray(value)) {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
-  }
-  const result = [];
-  for (let i = 0; i < value.length; ++i) {
-    result.push(anyOfValidator31(value[i], propertyPath + "[" + i + "]"));
+  const keySet = new Set(Object.keys(value));
+  result["index"] = numberValidator25(
+    value["index"],
+    `${propertyPath}.` + `index`,
+    errorList,
+  );
+  keySet.delete("index");
+  if (keySet.size !== 0) {
+    let extraKeys = "";
+    for (const k of keySet.keys()) {
+      extraKeys += `${k},`;
+    }
+    return buildError(
+      `validator.${parentType}.strict`,
+      { propertyPath, extraKeys },
+      errorList,
+    );
   }
   return result;
 }
-function objectValidator26(value, propertyPath, parentType = "object") {
+function objectValidator26(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "object",
+) {
   if (isNil(value)) {
-    throw _errorFn("validator.object.undefined", { propertyPath });
+    return buildError(
+      "validator.object.undefined",
+      { propertyPath },
+      errorList,
+    );
   }
   if (typeof value !== "object") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
   }
   const result = Object.create(null);
-  result["darkMode"] = booleanValidator27(
-    value["darkMode"],
-    propertyPath + "." + "darkMode",
+  const keySet = new Set(Object.keys(value));
+  result["name"] = stringValidator9(
+    value["name"],
+    `${propertyPath}.` + `name`,
+    errorList,
   );
-  result["preferredNumber"] = numberValidator28(
-    value["preferredNumber"],
-    propertyPath + "." + "preferredNumber",
-  );
-  result["direction"] = referenceValidator29(
-    value["direction"],
-    propertyPath + "." + "direction",
-  );
-  result["totalMess"] = arrayValidator30(
-    value["totalMess"],
-    propertyPath + "." + "totalMess",
-  );
+  keySet.delete("name");
+  if (keySet.size !== 0) {
+    let extraKeys = "";
+    for (const k of keySet.keys()) {
+      extraKeys += `${k},`;
+    }
+    return buildError(
+      `validator.${parentType}.strict`,
+      { propertyPath, extraKeys },
+      errorList,
+    );
+  }
   return result;
 }
-function stringValidator38(value, propertyPath, parentType = "string") {
+function objectValidator27(
+  value,
+  propertyPath,
+  errorList = [],
+  parentType = "object",
+) {
   if (isNil(value)) {
-    return "NORTH";
+    return buildError(
+      "validator.object.undefined",
+      { propertyPath },
+      errorList,
+    );
   }
-  if (typeof value !== "string") {
-    throw _errorFn(`validator.${parentType}.type`, { propertyPath });
+  if (typeof value !== "object") {
+    return buildError(
+      `validator.${parentType}.type`,
+      { propertyPath },
+      errorList,
+    );
   }
-  if (
-    value !== "NORTH" &&
-    value !== "EAST" &&
-    value !== "SOUTH" &&
-    value !== "WEST"
-  ) {
-    const oneOf = "NORTH, EAST, SOUTH, WEST";
-    throw _errorFn(`validator.${parentType}.oneOf`, { propertyPath, oneOf });
+  const result = Object.create(null);
+  const keySet = new Set(Object.keys(value));
+  result["todo"] = referenceValidator21(
+    value["todo"],
+    `${propertyPath}.` + `todo`,
+    errorList,
+  );
+  keySet.delete("todo");
+  if (keySet.size !== 0) {
+    let extraKeys = "";
+    for (const k of keySet.keys()) {
+      extraKeys += `${k},`;
+    }
+    return buildError(
+      `validator.${parentType}.strict`,
+      { propertyPath, extraKeys },
+      errorList,
+    );
   }
-  return value;
+  return result;
 }

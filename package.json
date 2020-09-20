@@ -7,17 +7,17 @@
     "start": "NODE_ENV=production node ./scripts/api.js"
   },
   "dependencies": {
-    "@lbu/insight": "0.0.33",
-    "@lbu/server": "0.0.33",
-    "@lbu/stdlib": "0.0.33",
-    "@lbu/store": "0.0.33",
-    "axios": "0.19.2",
-    "chance": "1.1.6"
+    "@lbu/insight": "0.0.73",
+    "@lbu/server": "0.0.73",
+    "@lbu/stdlib": "0.0.73",
+    "@lbu/store": "0.0.73",
+    "axios": "0.20.0",
+    "form-data": "3.0.0"
   },
   "devDependencies": {
-    "@lbu/cli": "0.0.33",
-    "@lbu/code-gen": "0.0.33",
-    "@lbu/lint-config": "0.0.33"
+    "@lbu/cli": "0.0.73",
+    "@lbu/code-gen": "0.0.73",
+    "@lbu/lint-config": "0.0.73"
   },
   "prettier": "@lbu/lint-config/prettierrc",
   "repository": {

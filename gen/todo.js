@@ -4,101 +4,67 @@ import { TypeCreator } from "@lbu/code-gen";
  * @param {App} app
  */
 export function todoModel(app) {
-  const M = new TypeCreator("todo");
+  const T = new TypeCreator("todo");
 
-  const todoList = M.object("List", {
-    name: M.string(),
-    items: M.array(
-      M.object("Item", {
-        completed: M.bool().default("false"),
-        name: M.string(),
+  const todoList = T.object("List").keys({
+    name: T.string(),
+    items: [
+      T.object("Item").keys({
+        completed: T.bool().default(false),
+        name: T.string(),
       }),
-    ),
+    ],
   });
 
-  const todoCollection = M.generic("Collection")
-    .keys(M.string())
+  const todoCollection = T.generic("Collection")
+    .keys(T.string())
     .values(todoList);
 
-  app.add(todoList);
   app.add(todoCollection);
 
-  const router = M.router("/todo");
+  const router = T.router("/todo");
 
-  const paramValidator = M.object("NameParam", {
-    name: M.string().min(0).max(30).trim().convert(),
-  });
+  const params = {
+    name: T.string().max(30).trim(),
+  };
 
-  app.add(
-    router.get("/", "all").response(
-      M.object({
-        store: todoCollection,
-      }),
-    ),
-  );
-
-  const todoListResponse = M.object("ListResponse", {
+  const response = {
     todo: todoList,
-  });
+  };
 
   app.add(
-    router
-      .get("/:name", "one")
-      .params(paramValidator)
-      .response(todoListResponse),
-  );
+    router.get("/", "all").response({
+      store: todoCollection,
+    }),
 
-  app.add(
+    router.get("/:name", "one").params(params).response(response),
+
     router
       .post("/", "new")
-      .body(
-        M.object({
-          name: M.string()
-            .min(1)
-            .max(40)
-            .trim()
-            .mock(`"Todo " + __.integer({ min: 0, max: 1000 })`),
-        }),
-      )
-      .response(todoListResponse),
-  );
+      .body({
+        name: params.name,
+      })
+      .response(response),
 
-  app.add(
     router
       .post("/:name/item/", "createItem")
-      .params(paramValidator)
-      .body(
-        M.object({
-          name: M.string()
-            .min(1)
-            .max(365)
-            .trim()
-            .mock("__.sentence({ words: 6 })"),
-        }),
-      )
-      .response(todoListResponse),
-  );
+      .params(params)
+      .body({
+        name: T.string().max(365).trim(),
+      })
+      .response(response),
 
-  app.add(
     router
       .post("/:name/item/toggle", "toggleItem")
-      .params(paramValidator)
-      .body(
-        M.object({
-          index: M.number().integer().convert().min(0),
-        }),
-      )
-      .response(todoListResponse),
-  );
+      .params(params)
+      .body({
+        index: T.number().convert().min(0),
+      })
+      .response(response),
 
-  app.add(
     router
       .delete("/:name", "delete")
-      .params(paramValidator)
-      .response(
-        M.object({
-          deleted: M.bool(),
-        }),
-      ),
+      .params(params)
+      .response({ deleted: true }),
   );
 }

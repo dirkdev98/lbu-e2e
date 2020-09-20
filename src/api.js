@@ -3,10 +3,10 @@ import { AppError, isNil } from "@lbu/stdlib";
 import {
   groupMiddleware,
   router,
-  setBodyParser,
+  setBodyParsers,
   todoHandlers,
 } from "./generated/router.js";
-import { validatorSetErrorFn } from "./generated/validators.js";
+import { validatorSetError } from "./generated/validators.js";
 import { app, bodyParsers, todoStore } from "./services/index.js";
 
 /**
@@ -35,8 +35,8 @@ export function createApp() {
 }
 
 export function constructApp() {
-  validatorSetErrorFn(AppError.validationError);
-  setBodyParser(bodyParsers.bodyParser);
+  validatorSetError(AppError.validationError);
+  setBodyParsers(bodyParsers);
 
   app.use(router);
 

@@ -8,7 +8,7 @@ mainTestFn(import.meta);
 
 createApiClient(
   axios.create({
-    baseURL: "http://localhost:3000",
+    baseURL: `http://localhost:${process.env.PORT ?? 3000}`,
   }),
 );
 

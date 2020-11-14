@@ -55,6 +55,7 @@ function mountHandlers() {
   todoHandlers.all = (ctx, next) => {
     ctx.body = {
       store: ctx.user,
+      poweredByRender: true,
     };
 
     return next();

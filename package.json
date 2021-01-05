@@ -11,7 +11,7 @@
     "@lbu/server": "0.0.73",
     "@lbu/stdlib": "0.0.73",
     "@lbu/store": "0.0.73",
-    "axios": "0.20.0",
+    "axios": "0.21.1",
     "form-data": "3.0.0"
   },
   "devDependencies": {
